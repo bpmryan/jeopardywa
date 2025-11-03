@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <form class="my-form">
+        <div class="login-title-row">
+            <h1>Login</h1>
+        </div>
+        <div class="input_wrapper">
+            <!-- Username field -->
+            <input 
+                type="username"
+                id="usernameLogin" 
+                name="username"
+                class="input_field"
+                placeholder="Your Username" 
+                required
+            >
+            <label for="username" class="input_label">Username</label>
+        </div>
+
+        <br>
+
+        <div class="input_wrapper">
+            <!-- Password field -->
+            <input 
+                type="password"
+                id="passwordLogin" 
+                name="username"
+                class="input_field"
+                placeholder="Your Password"
+                required
+            >
+            <label for="password" class="input_label">Password</label>
+            <!-- 
+                If needed for password field
+                Otherwise use for Signup.html (maybe)
+
+            title="Minimum 6 characters at least 1 Alphabet, 1 Number, and 1 Symbol"
+            pattern="^(?=.*[A-Za-z])(?=.*/d)(?=.[\W_])[A-Za-z\d\W_]{6,}$" 
+
+            -->
+        </div>
+
+        <br>
+
+        <div class="input_wrapper">
+            <!-- Returns the user back to index.html / home page -->
+            <button class="my-form_button"><a href="../index.html">Return to home</a></button>
+
+            <!-- Submit should take them to game dashboard -->
+            <button type="submit" class="my-form_button"><a href="../jeopardyDash/Dashboard.html">Submit</a></button>
+        </div>
+
+        <br>
+        
+        <div class="socials-row">
+            <a href="#" title="Use Google">
+                <img src="/src/main/resources/frontend/media/#" alt="Google">
+                Log in with Google
+            </a>
+        </div>
+
+        <br>
+
+        <div>
+            <!-- Place for user to go to change their password -->
+            <a href="/src/main/resources/frontend/userAuthen/ForgotPassword.html">Forgot password?</a>
+        </div>
+
+        <div class="my-form_actions">
+            <!-- Place for user to go signup -->
+            <div class="my-form_row">
+                <span>Don't have an account?</span>
+                <a href="/src/main/resources/frontend/userAuthen/Signup.html" title="Create Account">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </form>
+</body>
+<script src="../js/userAuthen.js"></script>
+</html>
