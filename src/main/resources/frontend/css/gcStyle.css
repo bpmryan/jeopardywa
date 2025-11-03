@@ -29,9 +29,29 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     background: (--primary);
     background: -webkit-linear-gradient(to right, var(--yellow),
             var(--primary-dark));
     background: linear-gradient(to right, var(--yellow),
             var(--primary-dark));
+}
+
+/* For header in gameContent.html */
+.header {
+    position: sticky;
+    top: 0;
+    overflow: hidden;
+    justify-content: space-between;
+    color: #f9faf8;
+    font-size: 24px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #1f2937;
+    padding: 10px 50px;
+}
+
+/* For CategoryItems.html and QnAItems.html */
+.card {
+    flex-direction: row;
+    
 }

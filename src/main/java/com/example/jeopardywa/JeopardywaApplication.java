@@ -7,22 +7,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
+// Doesn't work at the moment
 @SpringBootApplication
 @Controller
 public class JeopardywaApplication {
 	@RequestMapping("/")
 	public String readIndex() {
-		String getIndex = getIndex();
-		return getIndex();
+		
+		return "/src/main/resources/frontend/index.html";
 	}
 	
 
 	// public static void main(String[] args) {
 	// 	SpringApplication.run(JeopardywaApplication.class, args);
 	// }
-
-	private String getIndex() {
-		return "/src/main/resources/frontend/index.html";
-	}
 }
