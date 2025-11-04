@@ -43,15 +43,29 @@ body {
     top: 0;
     overflow: hidden;
     justify-content: space-between;
-    color: #f9faf8;
-    font-size: 24px;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #1f2937;
     padding: 10px 50px;
 }
 
-/* For CategoryItems.html and QnAItems.html */
-.card {
+.header p {
+    font-weight: bold;
+}
+
+/* For CategoryItems.html */
+.catPosition {
     flex-direction: row;
+    padding: 5%;
     
+}
+
+/* slider in QnAItems.html */
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 5px;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
 }
