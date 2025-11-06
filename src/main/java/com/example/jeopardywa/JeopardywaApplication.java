@@ -14,7 +14,7 @@ public class JeopardywaApplication {
 	@RequestMapping("/")
 	public String readIndex() {
 		
-		return "/src/main/resources/frontend/index.html";
+		return "index.html";
 	}
 	
 
