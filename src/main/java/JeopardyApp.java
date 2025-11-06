@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class JeopardyApp {
-    @RequestMapping("../src/main/resources/frontend/index.html")
-	public String readIndex() {
-		return "/src/main/resources/frontend/index.html";
+    @RequestMapping("/")
+	public String index() {
+		return "index.html";
 	}
 }
