@@ -1,2 +1,0 @@
-use jeopardywebapp;
-show tables;
