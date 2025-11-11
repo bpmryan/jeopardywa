@@ -9,12 +9,14 @@
 </head>
 
 <!-- Card that goes to gameContent.html -->
-<body class="card">
+<body class="qnaItems">
     <!-- Place for user to input point value of the question -->
     <div>
         <label for="ptValue">Point value</label>
         <input type="ptValue" id="ptValue" name="ptValue" class="input_field" placeholder="200" required>
     </div>
+
+    <br>
 
     <!-- Place for user to add question -->
     <div>
@@ -22,22 +24,28 @@
         <textarea name="question" rows="5" cols="30"></textarea>
     </div>
 
+    <br>
+
     <!-- Place for user to add image to question -->
     <div>
-        <label for="imageQuestion">Image to question (optional)</label>
+        <label for="imageQuestion">Image to question (optional):</label>
+        <br>
         <button>Browse</button>
         <input type="imageQuestion" id="imageQuestion" name="imageQuestion" class="" placeholder="path or URL">
     </div>
 
+    <br>
+
     <!-- Place for user to adjust the size of the question image -->
     <div>
         <select>
-            <option value="_"></option>
+            <option value="-position-"></option>
             <option value="top">top</option>
             <option value="bottom">bottom</option>
             <option value="left">left</option>
             <option value="right">right</option>
         </select>
+        <br>
         <label for="scaleQuestion">Scale:</label>
         <input type="range" id="scaleQuestion" min="10" max="200" value="100" class="slider">
         <label for="scaleQuestion">Value: <span id="sliderValueQuestion"></span></label>
@@ -51,26 +59,34 @@
         <textarea name="answer" rows="5" cols="30"></textarea>
     </div>
 
+    <br>
+
      <!-- Place for user to add image to question -->
     <div>
         <label for="imageAnswer">Image to answer (optional)</label>
+        <br>
         <button>Browse</button>
         <input type="imageAnswer" id="imageAnswer" name="imageAnswer" class="" placeholder="path or URL">
     </div>
 
+    <br>
+
     <!-- Place for user to adjust the size of the question image -->
     <div>
         <select>
-            <option value="_"></option>
+            <option value="-position-"></option>
             <option value="top">top</option>
             <option value="bottom">bottom</option>
             <option value="left">left</option>
             <option value="right">right</option>
         </select>
+        <br>
         <label for="scaleAnswer">Scale:</label>
         <input type="range" id="scaleAnswer" min="10" max="200" value="100" class="slider">
         <label for="scaleAnswer">Value: <span id="sliderValueAnswer"></span></label>
     </div>
+
+    <br>
 
     <button>Preview</button>
 

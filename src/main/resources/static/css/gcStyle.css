@@ -29,9 +29,19 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     background: (--primary);
     background: -webkit-linear-gradient(to right, var(--yellow),
             var(--primary-dark));
     background: linear-gradient(to right, var(--yellow),
             var(--primary-dark));
+}
+
+.category {
+    flex-direction: row;
+}
+
+.qnaItems {
+    justify-content: center;
+    align-self: center;
 }

@@ -11,6 +11,7 @@ select * from CurrentGame;
 select * from Teams;
 select * from TeamsCorrectQnA;
 
+
 -- create table UserInfo (
 --     -- userId example: U01234
 --     -- U is always a part if id
@@ -41,6 +42,10 @@ select * from TeamsCorrectQnA;
 --         references Game(gameId)
 -- );
 
+
+-- alter table JeopardyCategory
+-- add bgkColor char(6) not null,
+-- add textColor char(6) not null;
 
 -- create table QnAInfo (
 --     -- qnaId example: Q01234
