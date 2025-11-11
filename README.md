@@ -126,3 +126,7 @@ working --> merging --> testing --> main
     <li> Questions and answers the user created in the templates</li>
         <ul> 
             <li> txt file that saves each one</li>
+
+## Client and Server
+- Client (frontend) is resources folder
+- Server (backend) is java folder
