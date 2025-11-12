@@ -1,7 +1,11 @@
 package model;
 
+// import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+
 public class Category {
     // private methods to write to db
+    @Id
     private String categoryId;
     private String categoryName;
     private String bkgColor;
