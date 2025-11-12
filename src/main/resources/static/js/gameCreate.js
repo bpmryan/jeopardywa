@@ -26,14 +26,27 @@ async function saveCategory() {
     });
 }
 
-// Add new QnA html
-doucment.addEventListener("click", asynec (event) => {
-    if (event.target && event.target.id === "addQnABtn") {
-        const response = await fetch("/gameCreate/QnAItems.html");
-        const html = await response.text();
-        document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
+// Add new QnA HTML dynamically
+document.addEventListener("click", async (event) => {
+  if (event.target && event.target.id === "addQnABtn") {
+    try {
+      const response = await fetch("/gameCreate/QnAItems.html");
+      if (!response.ok) {
+        throw new Error(`Failed to load QnAItems.html: ${response.statusText}`);
+      }
+
+      const html = await response.text();
+      document
+        .getElementById("mainContainer")
+        .insertAdjacentHTML("beforeend", html);
+
+      console.log("QnA item added successfully!");
+    } catch (error) {
+      console.error("Error loading QnA item:", error);
     }
+  }
 });
+
 
 // Function that helps send the QnA data over to db
 async function saveQnA() {
