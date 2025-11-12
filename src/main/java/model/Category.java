@@ -3,8 +3,10 @@ package model;
 // import jakarta.persistence.*;
 import org.springframework.data.annotation.Id;
 
+@Entity
+@Table(name = "JeopardyCategory")
 public class Category {
-    // private methods to write to db
+    // private methods to write to db (name: JeopardyCategory)
     @Id
     private String categoryId;
     private String categoryName;
