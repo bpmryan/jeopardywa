@@ -1,37 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Game Creation</title>
-    <link rel="stylesheet" href="../css/gcStyle.css">
-</head>
-<!-- Main file that displays the "create game area" -->
+    <link rel="stylesheet" href="../css/gcStyle.css" />
+  </head>
+  <!-- Main file that displays the "create game area" -->
 
-<body>
+  <body>
     <header>
-        <nav>
-            <h1>Jeopardy Template/Creation Thingy Space</h1>
-            <div>
-                <button id="categories">Save All</button>
-                <button id="back"><a href="../jeopardyDash/Dashboard.html">Back</a></button>
-                <button id="addCategory">Add Category</button>
-                <button>Preview Game</button>
-            </div>
-        </nav>
+      <nav>
+        <h1>Jeopardy Template/Creation Thingy Space</h1>
+        <div>
+          <button id="categories">Save All</button>
+          <button id="back">
+            <a href="../jeopardyDash/Dashboard.html">Back</a>
+          </button>
+          <button id="addCategory">Add Category</button>
+          <button>Preview Game</button>
+        </div>
+        <div id="mainContainer">
+          <!-- CategoryItem should pop up here -->
+        </div>
+      </nav>
     </header>
 
-    <iframe src="CategoryItem.html" width="95%" height="10%" title="Category Items"></iframe>
+    <!-- <iframe src="CategoryItem.html" width="95%" height="10%" title="Category Items"></iframe>
 <br>
-    <iframe src="QnAItems.html" width="100%" height="30%" title="QnA Items"></iframe>
+    <iframe src="QnAItems.html" width="100%" height="30%" title="QnA Items"></iframe> -->
 
     <!--
         Should be a blank space for categories and QnA to pop up 
         whenever user clicks the button for it 
     -->
-    <br><br>
+    <br /><br />
     <p>Tip: Collapse categories for easier navigation</p>
-</body>
-
+    <script src="../js/gameCreate.js"></script>
+  </body>
 </html>
