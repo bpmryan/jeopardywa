@@ -6,6 +6,5 @@ import model.UserInfo;
 
 public interface UserInfoRepo extends JpaRepository<UserInfo, String> {
 
-    UserInfo save(UserInfo user);
     
 }

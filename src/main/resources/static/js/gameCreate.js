@@ -2,19 +2,43 @@
 // question.className('question');
 // document.getElementById('questionContainer').appendChild(question);
 
-// Add new category HTML function
+// Add new category HTML function 
+// with help from chatgpt
 document.getElementById("addCategory").addEventListener("click", async () => {
   const response = await fetch("../gameCreate/CategoryItem.html");
-  const doctype = "<!DOCTYPE html>";
-  const iframeStart = '<iframe id="inlineFrameExample" title="Inline Frame Example" width="300" height="200" src="../gameCreate/CategoryItem.html">';
-  const categoryItemHTML = await response.text();
-  const iframeEnd = "</iframe></html>";
-  const html = doctype + iframeStart + categoryItemHTML + iframeEnd;
+  const html = await response.text();
   console.log(html);
 
   // Check this one (inner(html))
-  document.getElementById("mainContainer").innerHTML(html);
+  document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
 });
+
+
+
+
+// initial code 
+// document.getElementById("addCategory").addEventListener("click", async () => {
+//   const response = await fetch("../gameCreate/CategoryItem.html");
+//   const doctype = "<!DOCTYPE html>";
+//   const iframeStart = '<iframe id="inlineFrameExample" title="Inline Frame Example" width="300" height="200" src="../gameCreate/CategoryItem.html">';
+//   const categoryItemHTML = await response.text();
+//   const iframeEnd = "</iframe></html>";
+//   const html = doctype + iframeStart + categoryItemHTML + iframeEnd;
+//   console.log(html);
+
+//   // Check this one (inner(html))
+//   document.getElementById("mainContainer").innerHTML(html);
+// });
+
+/*
+Part didn't initially work because 
+1. innerHTML is a property and not a function (element.innerHTML = "some html";)
+    - had to replace it back with insertAdjacentHTML("beforeand", html)
+2. Can't inject html boilerplate because it creates a nested html and breaks DOM parsing 
+3. Had to delete the major boilplate html stuff from QnAItems and CategoryItem and leave it as a partial html (interface?)
+*/
+
+
 
 // Function that helps send the category data over to db
 // Asynec functions makes it return a promise
