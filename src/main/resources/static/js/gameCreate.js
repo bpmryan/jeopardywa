@@ -2,15 +2,29 @@
 // question.className('question');
 // document.getElementById('questionContainer').appendChild(question);
 
-// Add new category HTML function 
-// with help from chatgpt
+// load html partail into a string 
+async function loadPartial(path) {
+  const response = await fetch(path);
+  return await response.text();
+}
+
+// Add new category HTML function (with help from chatgpt)
+/*
+Part didn't initially work because 
+1. innerHTML is a property and not a function (element.innerHTML = "some html";)
+    - had to replace it back with insertAdjacentHTML("beforeand", html)
+2. Can't inject html boilerplate because it creates a nested html and breaks DOM parsing 
+3. Had to delete the major boilplate html stuff from QnAItems and CategoryItem and leave it as a partial html (interface?)
+*/
+
 document.getElementById("addCategory").addEventListener("click", async () => {
-  const response = await fetch("../gameCreate/CategoryItem.html");
-  const html = await response.text();
+  // const response = await fetch("../gameCreate/CategoryItem.html");
+  const html = await loadPartial("../gameCreate/CategoryItem.html");
   console.log(html);
 
   // Check this one (inner(html))
-  document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
+  const container = document.getElementById("mainContainer");
+  container.insertAdjacentHTML("beforeend", html);
 });
 
 
@@ -30,69 +44,129 @@ document.getElementById("addCategory").addEventListener("click", async () => {
 //   document.getElementById("mainContainer").innerHTML(html);
 // });
 
-/*
-Part didn't initially work because 
-1. innerHTML is a property and not a function (element.innerHTML = "some html";)
-    - had to replace it back with insertAdjacentHTML("beforeand", html)
-2. Can't inject html boilerplate because it creates a nested html and breaks DOM parsing 
-3. Had to delete the major boilplate html stuff from QnAItems and CategoryItem and leave it as a partial html (interface?)
-*/
+// with help from chatgpt
+// document.getElementById("addCategory").addEventListener("click", async () => {
+//   const response = await fetch("../gameCreate/CategoryItem.html");
+//   const html = await response.text();
+//   console.log(html);
+
+//   // Check this one (inner(html))
+//   document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
+// });
+
+// event delegation
+document.addEventListener("click" , async (event) => {
 
 
+  // Add QnA 
+  if (event.target.id === "addQnABtn") {
+    // looks at css files
+    const categoryCard = event.target.closest(".categoryCard");
+    const qnaContainer = categoryCard.querySelector(".qnaContainer");
 
-// Function that helps send the category data over to db
-// Asynec functions makes it return a promise
-async function saveCategory() {
-  const data = {
-    categoryName: document.getElementById("categoryName").value,
-    bkgColor: document.getElementId("bgkColor").value,
-    textColor: document.getElementId("textColor").value,
-  };
+    // action to load up QnAItems.html
+    const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
 
-  // await is the promise part of the function
-  await fetch("/api/categories", {
-    method: "POST", // specified as post request
-    headers: { "Content-Type": "application/json" }, //server of body is declared as json
-    body: JSON.stringify(data), // data is sent to the server
-  });
-}
+    qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
+  }
 
-// Add new QnA HTML dynamically
-document.addEventListener("click", async (event) => {
-  if (event.target && event.target.id === "addQnABtn") {
-    try {
-      const response = await fetch("/gameCreate/QnAItems.html");
-      if (!response.ok) {
-        throw new Error(`Failed to load QnAItems.html: ${response.statusText}`);
-      }
+  // Delete category
+  // Later create a warning to allow user to check if they want to 
+  if (event.target.classList.contains("deleteCategoryBtn")) {
+    event.target.closest(".categoryCard").remove();
+  }
 
-      const html = await response.text();
-      document
-        .getElementById("mainContainer")
-        .insertAdjacentHTML("beforeend", html);
+  // Delete QnA
+  // Later create a warning to allow user to check if they want to 
+  if (event.target.classList.contains("deleteQnABtn")) {
+    event.target.closest(".qnaCard").remove();
+  } 
 
-      console.log("QnA item added successfully!");
-    } catch (error) {
-      console.error("Error loading QnA item:", error);
-    }
+  // Collapse Category
+  if (event.target.classList.contains("collapseCategory")) {
+    // looks at css classes 
+    const card = event.target.closest(".categoryCard");
+    card.classList.toggle("collapsed");
+
+    // selects the first element/tag in the html and matches it with the specified css selector
+    // returns the first element that matches the css selector
+    const qnaContainer = card.querySelector(".qnaContainer");
+    const settings = card.querySelector(".categorySettings");
+
+    /* 
+    If QnA is currently hidden when the button is clicked, then show it
+    (and works the other way around too)
+    block = visible
+    none = invisible
+    */
+    qnaContainer.style.display = qnaContainer.style.display === "none" ? "block" : "none";
+
+    settings.style.display = settings.style.display === "none" ? "flex" : "none";
   }
 });
 
-// Function that helps send the QnA data over to db
-async function saveQnA() {
-  const data = {
-    categoryId: document.getElementById("categoryId").value,
-    pointValue: parseInt(doucment.getElementById("pointValue")).value,
-    question: doucment.getElementById("questionText").value,
-    answer: doucment.getElementById("answerText").value,
-    imageUrl: document.getElementById("imageUrl").value,
-    imagePosition: document.getElementById("imagePosition").value,
-    imageScale: document.getElementById("imageScale").value,
-  };
 
+
+// Asynec functions makes it return a promise and saves category data to db
+// Saves only the things in the cateogry cards 
+
+/* 
+ * Searches through every category card in the game creation page (gameContent.html)
+ * extracts name, bkgcolor, textColor
+ * builds js array with that data 
+ * sends array to spring boot in the "await" section 
+ * 
+*/
+// If anything goes wrong when writing to db CHECK HERE as well
+async function saveAllCategory() {
+  const categories = [...document.querySelectorAll(".catgeoryCard")].map(card => ({
+    categoryName: card.querySelector(".categoryName").value,
+    bkgColor: card.querySelector(".categoryBkgColor").value,
+    textColor: card.querySelector(".categoryTextColor").value,
+  }));
+
+  // await is the promise part of the function
+  await fetch("/api/categories/saveAll", {
+    method: "POST", // specified as post request
+    headers: { "Content-Type": "application/json" }, //server of body is declared as json
+    body: JSON.stringify(categories), // data is sent to the server
+  });
+}
+
+
+
+// Function that helps send the QnA data over to db
+// Saves only the QnA in every category
+/* 
+ * It still looks at all categories 
+ * Extracts the category name
+ * Extacts all user inputs
+ * packs it into a json list 
+ * sends it over to spring boot api
+*/
+
+async function saveAllQnA() {
+  const output = [];
+
+  document.querySelectorAll(".categoryCard").forEach(categoryCard => {
+    const categoryName = categoryCard.querySelector(".categoryName").value;
+
+    categoryCard.querySelectorAll(".qnaCard").forEach(qnaCard => {
+      output.push({
+        categoryName,
+        pointValue: parseInt(doucment.getElementById("pointValue")).value,
+        question: doucment.getElementById("questionText").value,
+        answer: doucment.getElementById("answerText").value,
+        imageUrl: document.getElementById("imageUrl").value,
+        imagePosition: document.getElementById("imagePosition").value,
+        imageScale: document.getElementById("imageScale").value,
+      });
+    });
+  });
+  
   await fetch("/api/qna", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: JSON.stringify(output),
   });
 }

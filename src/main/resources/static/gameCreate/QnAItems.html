@@ -1,9 +1,9 @@
 <!-- Card that goes to gameContent.html -->
-<body class="qnaItems">
+<div class="qnaCard">
     <!-- Place for user to input point value of the question -->
     <div>
         <label for="ptValue">Point value</label>
-        <input type="ptValue" id="ptValue" name="ptValue" class="input_field" placeholder="200" required>
+        <input type="number" id="ptValue" name="ptValue" class="input_field" placeholder="200" required>
     </div>
 
     <br>
@@ -11,7 +11,7 @@
     <!-- Place for user to add question -->
     <div>
         <label for="question">Question</label>
-        <textarea name="question" rows="5" cols="30"></textarea>
+        <textarea class="questionText" rows="5" cols="30" name="question" placeholder="Enter a question""></textarea>
     </div>
 
     <br>
@@ -20,8 +20,8 @@
     <div>
         <label for="imageQuestion">Image to question (optional):</label>
         <br>
-        <button>Browse</button>
-        <input type="imageQuestion" id="imageQuestion" name="imageQuestion" class="" placeholder="path or URL">
+        <button class="browseQuestionImg">Browse</button>
+        <input type="text" class="questionImageUrl" placeholder="path or URL">
     </div>
 
     <br>
@@ -35,28 +35,30 @@
             <option value="left">left</option>
             <option value="right">right</option>
         </select>
-        <br>
+
+        <br><br>
+
         <label for="scaleQuestion">Scale:</label>
         <input type="range" id="scaleQuestion" min="10" max="200" value="100" class="slider">
-        <label for="scaleQuestion">Value: <span id="sliderValueQuestion"></span></label>
+        <span class="questionScaleValue">100</span>
     </div>
 
     <br>
 
     <!-- Place for user to add answer to question -->
     <div>
-        <label for="answer">Answer</label>
-        <textarea name="answer" rows="5" cols="30"></textarea>
+        <label>Answer</label>
+        <textarea name="answer" rows="5" cols="30" placeholder="Enter answer"></textarea>
     </div>
 
     <br>
 
      <!-- Place for user to add image to question -->
     <div>
-        <label for="imageAnswer">Image to answer (optional)</label>
+        <label>Image to answer (optional):</label> 
         <br>
-        <button>Browse</button>
-        <input type="imageAnswer" id="imageAnswer" name="imageAnswer" class="" placeholder="path or URL">
+        <button class="browseAnswerImg">Browse</button>
+        <input type="imageAnswer" class="answerImageUrl" placeholder="path or URL">
     </div>
 
     <br>
@@ -70,14 +72,17 @@
             <option value="left">left</option>
             <option value="right">right</option>
         </select>
-        <br>
-        <label for="scaleAnswer">Scale:</label>
-        <input type="range" id="scaleAnswer" min="10" max="200" value="100" class="slider">
-        <label for="scaleAnswer">Value: <span id="sliderValueAnswer"></span></label>
+
+        <br><br>
+
+        <label>Scale:</label>
+        <input type="range" class="answerScale" min="10" max="200" value="100" >
+        <span class="answerScaleValue">100</span>
     </div>
 
     <br>
 
+    <button class="deleteQnABtn">Delete QnA</button>
     <button>Preview</button>
 
-</body>
+</div>
