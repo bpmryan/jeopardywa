@@ -37,11 +37,15 @@ body {
             var(--primary-dark));
 }
 
+nav {
+    position: sticky;
+}
+
 .categoryCard {
     border: 2px solid #444;
     padding: 12px;
     margin: 10px 0;
-    background: #1a1a2e;
+    background: var(--primary-dark);
     color: var(--white);
 }
 

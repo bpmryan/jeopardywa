@@ -27,33 +27,6 @@ document.getElementById("addCategory").addEventListener("click", async () => {
   container.insertAdjacentHTML("beforeend", html);
 });
 
-
-
-
-// initial code 
-// document.getElementById("addCategory").addEventListener("click", async () => {
-//   const response = await fetch("../gameCreate/CategoryItem.html");
-//   const doctype = "<!DOCTYPE html>";
-//   const iframeStart = '<iframe id="inlineFrameExample" title="Inline Frame Example" width="300" height="200" src="../gameCreate/CategoryItem.html">';
-//   const categoryItemHTML = await response.text();
-//   const iframeEnd = "</iframe></html>";
-//   const html = doctype + iframeStart + categoryItemHTML + iframeEnd;
-//   console.log(html);
-
-//   // Check this one (inner(html))
-//   document.getElementById("mainContainer").innerHTML(html);
-// });
-
-// with help from chatgpt
-// document.getElementById("addCategory").addEventListener("click", async () => {
-//   const response = await fetch("../gameCreate/CategoryItem.html");
-//   const html = await response.text();
-//   console.log(html);
-
-//   // Check this one (inner(html))
-//   document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
-// });
-
 // event delegation
 document.addEventListener("click" , async (event) => {
 
