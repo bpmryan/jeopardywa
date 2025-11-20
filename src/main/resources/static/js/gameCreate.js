@@ -43,11 +43,6 @@ document.getElementById("addCategory").addEventListener("click", async () => {
   // const response = await fetch("../gameCreate/CategoryItem.html");
   const html = await loadPartial("../gameCreate/CategoryItem.html");
   document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
-  
-
-  // Check this one (inner(html))
-  const container = document.getElementById("mainContainer");
-  container.insertAdjacentHTML("beforeend", html);
 });
 
 // event delegation
@@ -58,9 +53,13 @@ document.addEventListener("click" , async (event) => {
   if (target.classList.contains("addQnABtn")) {
     // looks at css files
     const categoryCard = event.target.closest(".categoryCard");
+    if (!categoryCard) return;
+
      // action to load up QnAItems.html
-    const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
     const qnaContainer = categoryCard.querySelector(".qnaContainer");
+    if (!qnaContainer) return;
+
+    const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
     qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
     updateRangeDisplays(qnaContainer);
     renumberQnA(categoryCard);

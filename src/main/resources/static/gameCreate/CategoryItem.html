@@ -1,9 +1,11 @@
 <!-- Card that contains category name, background of categories, text color, buttons to add qna and deleting whole section -->
 
-<div class="categoryCard" data-catgeory-id="">
+<div class="categoryCard">
+
         <div class="categoryHeader">
-            <label for="categoryName">Category Name:</label>
-            <input type="categoryName" id="categoryName" name="categoryName" class="" placeholder="e.g. Math">
+            <label>Category Name:</label>
+            <input type="text" class="categoryName" placeholder="e.g. Math">
+
             <button class="collapseCategory">Collapse</button>
             <button class="deleteCategoryBtn">Delete category</button>
         </div>
@@ -11,23 +13,21 @@
 
             <!-- Color picker for background color -->
         <div class="categorySettings">
-            <label for="backgroundColor">Background:</label>
-            <input type="color" id="bgkColor" name="bgkColor" value="#13162a">
+            <label>Background:</label>
+            <input type="color" class="bgkColor" value="#13162a">
             
             <br><br>
 
             <!-- Color picker for text color -->
             <label for="textColor">Text:</label>
-            <input type="color" id="textColor" name="textColor" value="#13162a">
+            <input type="color" class="textColor" value="#13162a">
 
             <br><br>
         </div>
 
             
 
-            <button id="addQnABtn"><a href="QnAItems.html"></a>Add Question & Answer</button>
+            <button class="addQnABtn"><a href="QnAItems.html"></a>Add Question & Answer</button>
+            <div class="qnaContainer"></div>
       </div>
-            
-
-    <div class="qnaContainer"></div>
 </div>
