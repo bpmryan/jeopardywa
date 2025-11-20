@@ -40,7 +40,6 @@ Part didn't initially work because
 */
 
 document.getElementById("addCategory").addEventListener("click", async () => {
-  // const response = await fetch("../gameCreate/CategoryItem.html");
   const html = await loadPartial("../gameCreate/CategoryItem.html");
   document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
 });
@@ -51,7 +50,7 @@ document.addEventListener("click" , async (event) => {
 
   // Add QnA inside category
   if (target.classList.contains("addQnABtn")) {
-    // looks at css files
+    // looks at css classes/ids
     const categoryCard = event.target.closest(".categoryCard");
     if (!categoryCard) return;
 
@@ -100,21 +99,7 @@ document.addEventListener("click" , async (event) => {
 
     settings.style.display = settings.style.display === "none" ? "flex" : "none";
   }
-
-  // This occurs when "Add Question & Answer" is clicked (To add numbers to the question from renumberQnA function)
-  // if (event.target.classList.contains("addQnABtn")) {
-  //   const categoryCard = event.target.closest(".categoryCard");
-  //   const qnaContainer = categoryCard.querySelector(".qnaContainer");
-
-  //   const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
-  //   qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
-
-  //   renumberQnA(categoryCard);
-  // }
 });
-
-
-
 
 // Asynec functions makes it return a promise and saves category data to db
 async function saveAll() {
@@ -138,7 +123,7 @@ async function saveAll() {
 
     categoryCard.querySelectorAll(".qnaCard").forEach(qnaCard => {
       category.qnaList.push({
-         // Function that helps send the QnA data over to db
+        // Function that helps send the QnA data over to db
         // Saves QnA in every category
         /* 
         * It still looks at all categories 

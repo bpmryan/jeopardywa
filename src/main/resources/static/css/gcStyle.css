@@ -38,7 +38,15 @@ body {
 }
 
 nav {
+    padding: 10px;
+    margin: 10px;
     position: sticky;
+}
+
+nav div {
+    display: flex;
+
+    margin: auto auto;
 }
 
 #mainContainer {
@@ -56,14 +64,9 @@ nav {
 .catgeorySettings {
     display: flex;
     gap: 12px;
-    margin-bottom: 10px;
-}
-
-.catgeorySettings {
-    display: flex;
-    gap: 12px;
     align-items: center;
     margin-top: 8px;
+    margin-bottom: 10px;
 }
 
 .qnaCard {
@@ -71,6 +74,7 @@ nav {
     padding: 10px;
     margin: 8px 0;
     background: #23233b;
+
 }
 
 .qnaContainer {
