@@ -91,6 +91,13 @@ document.addEventListener("click" , async (event) => {
   }
 });
 
+// Adds a number to every question in each category
+function renumberQnA(categoryCard) {
+  const qnaCarda = categoryCard.querySelectorAll(".qnaCard");
+  qnaCards.forEach((card, index) => {
+    card.querySelector(".qnaTitle").textContent = `Question ${index + 1}`;
+  }) 
+}
 
 
 // Asynec functions makes it return a promise and saves category data to db
@@ -154,10 +161,3 @@ async function saveAll() {
   console.log("Save entire game:", gameData);
 }
 
-// Adds a number to every question in each category
-function renumberQnA(categoryCard) {
-  const qnaCarda = categoryCard.querySelectorAll(".qnaCard");
-  qnaCards.forEach((card, index) => {
-    card.querySelector(".qnaTitle").textContent = `Question ${index + 1}`;
-  }) 
-}
