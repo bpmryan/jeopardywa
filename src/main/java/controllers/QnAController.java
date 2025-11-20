@@ -9,7 +9,7 @@ import repo.QnARepo;
 @RestController
 @RequestMapping("/api/qna")
 @CrossOrigin(origins = "*")
-public class QnAItems {
+public class QnAController {
     
     @Autowired
     private QnARepo qnaRepo;

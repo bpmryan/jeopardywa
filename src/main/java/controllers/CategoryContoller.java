@@ -19,7 +19,7 @@ public class CategoryContoller {
     // Java function to create CategoryId and save to db
     @PostMapping
     public Category addCategory(@RequestBody Category category) {
-        category.setCategoryId("C" + String.format("%05d", (int)(Math.random() *100000)));
+        category.setCategoryId("C" + String.format("%05d", (int)(Math.random() * 100000)));
         return categoryRepo.save(category);
     }
 

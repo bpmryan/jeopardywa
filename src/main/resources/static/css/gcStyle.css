@@ -41,6 +41,10 @@ nav {
     position: sticky;
 }
 
+#mainContainer {
+    padding: 12px;
+}
+
 .categoryCard {
     border: 2px solid #444;
     padding: 12px;
@@ -55,11 +59,22 @@ nav {
     margin-bottom: 10px;
 }
 
+.catgeorySettings {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 8px;
+}
+
 .qnaCard {
     border: 1px solid #888;
     padding: 10px;
     margin: 8px 0;
     background: #23233b;
+}
+
+.qnaContainer {
+    margin: 10px;
 }
 
 .collapsed .qnaContainer

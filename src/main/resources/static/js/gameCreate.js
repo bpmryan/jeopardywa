@@ -5,7 +5,29 @@
 // load html partail into a string 
 async function loadPartial(path) {
   const response = await fetch(path);
+  if (!response.ok) throw new Error('Failed to load ' + path);
   return await response.text();
+}
+
+// Adds a number to every question in each category
+function renumberQnA(categoryCard) {
+  const qnaCard = categoryCard.querySelectorAll(".qnaCard");
+  qnaCard.forEach((card, index) => {
+    card.querySelector(".qnaTitle").textContent = `Question ${index + 1}`;
+  }); 
+}
+
+// Adjust image size
+function updateRangeDisplays(container) {
+  container.querySelectorAll('input[type="range"]').forEach(range => {
+    const label = range.nextElementSibling;
+    if (label && label.classList.contains('questionImageScaleValue') || label && label.classList.contains('answerImageScaleValue')) {
+      label.textContent = range.value;
+    }
+    range.addEventListener('input', () => {
+      if (label) label.textContent = range.value;
+    });
+  });
 }
 
 // Add new category HTML function (with help from chatgpt)
@@ -20,7 +42,8 @@ Part didn't initially work because
 document.getElementById("addCategory").addEventListener("click", async () => {
   // const response = await fetch("../gameCreate/CategoryItem.html");
   const html = await loadPartial("../gameCreate/CategoryItem.html");
-  console.log(html);
+  document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
+  
 
   // Check this one (inner(html))
   const container = document.getElementById("mainContainer");
@@ -29,28 +52,17 @@ document.getElementById("addCategory").addEventListener("click", async () => {
 
 // event delegation
 document.addEventListener("click" , async (event) => {
+  const target = event.target;
 
-
-  // Add QnA 
-  if (event.target.id === "addQnABtn") {
+  // Add QnA inside category
+  if (target.classList.contains("addQnABtn")) {
     // looks at css files
     const categoryCard = event.target.closest(".categoryCard");
-    const qnaContainer = categoryCard.querySelector(".qnaContainer");
-
-    // action to load up QnAItems.html
+     // action to load up QnAItems.html
     const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
-
-    qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
-  }
-
-  // This occurs when "Add Question & Answer" is clicked (To add numbers to the question from renumberQnA function)
-  if (event.target.classList.contains("addQnABtn")) {
-    const categoryCard = event.target.closest(".categoryCard");
     const qnaContainer = categoryCard.querySelector(".qnaContainer");
-
-    const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
     qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
-
+    updateRangeDisplays(qnaContainer);
     renumberQnA(categoryCard);
   }
 
@@ -89,15 +101,20 @@ document.addEventListener("click" , async (event) => {
 
     settings.style.display = settings.style.display === "none" ? "flex" : "none";
   }
+
+  // This occurs when "Add Question & Answer" is clicked (To add numbers to the question from renumberQnA function)
+  // if (event.target.classList.contains("addQnABtn")) {
+  //   const categoryCard = event.target.closest(".categoryCard");
+  //   const qnaContainer = categoryCard.querySelector(".qnaContainer");
+
+  //   const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
+  //   qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
+
+  //   renumberQnA(categoryCard);
+  // }
 });
 
-// Adds a number to every question in each category
-function renumberQnA(categoryCard) {
-  const qnaCarda = categoryCard.querySelectorAll(".qnaCard");
-  qnaCards.forEach((card, index) => {
-    card.querySelector(".qnaTitle").textContent = `Question ${index + 1}`;
-  }) 
-}
+
 
 
 // Asynec functions makes it return a promise and saves category data to db
@@ -110,18 +127,18 @@ async function saveAll() {
  * 
 */
 // If anything goes wrong when writing to db CHECK HERE as well
-  const gaemData = {categories: [] };
+  const gameData = {categories: [] };
 
     document.querySelectorAll(".catgeoryCard").forEach(categoryCard => {
-      const categories = {
-        categoryName: card.querySelector(".categoryName").value,
-        bkgColor: card.querySelector(".bgkColor").value,
-        textColor: card.querySelector(".textColor").value,
+      const category = {
+        categoryName: card.querySelector(".categoryName").value || "",
+        bkgColor: card.querySelector(".bgkColor").value || "",
+        textColor: card.querySelector(".textColor").value || "",
         gameId: []
       };
 
     categoryCard.querySelectorAll(".qnaCard").forEach(qnaCard => {
-      qnaList.push({
+      category.qnaList.push({
          // Function that helps send the QnA data over to db
         // Saves QnA in every category
         /* 
@@ -131,7 +148,7 @@ async function saveAll() {
         * packs it into a json list 
         * sends it over to spring boot api
         */
-        categoryId,
+        // categoryId,
         pointValue: parseInt(doucment.querySelectorAll(".ptValue")).value,
         question: doucment.querySelectorAll(".questionText").value,
         answer: doucment.querySelectorAll(".answerText").value,
@@ -160,4 +177,6 @@ async function saveAll() {
 
   console.log("Save entire game:", gameData);
 }
+
+document.getElementById("saveGameBtn").addEventListener("click", saveAll);
 

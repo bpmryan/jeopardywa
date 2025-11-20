@@ -15,11 +15,19 @@ public class QnA {
     private String qnaId;
     private String categoryId;
     private int pointValue;
-    private String question;
-    private String answer;
-    private String imageUrl;
-    private String imagePosition;
-    private String imageScale;
+    private String questionId;
+    private String answerId; 
+    private String questionText;
+    private String answerText;
+    private String questionImageUrl;
+    private String questionImagePosition;
+    private String questionImageScale;
+    private String answerImageUrl;
+    private String answerImagePosition;
+    private String answerImageScale;
+
+    // Apparently spring boot need no-args constructors to run
+    public QnA() {}
 
     // getters and setters
     public String getQnaId() {
@@ -40,35 +48,68 @@ public class QnA {
     public void setPointValue(int pointValue) {
         this.pointValue = pointValue;
     }
-    public String getQuestion() {
-        return question;
+    public String getQuestionId() {
+        return questionId;
     }
-    public void setQuestion(String question) {
-        this.question = question;
+
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
     }
-    public String getAnswer() {
-        return answer;
+
+    public String getAnswerId() {
+        return answerId;
     }
-    public void setAnswer(String answer) {
-        this.answer = answer;
+
+    public void setAnswerId(String answerId) {
+        this.answerId = answerId;
     }
-    public String getImageUrl() {
-        return imageUrl;
+    public String getQuestionText() {
+        return questionText;
     }
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setQuestionText(String question) {
+        this.questionText = question;
     }
-    public String getImagePosition() {
-        return imagePosition;
+    public String getAnswerText() {
+        return answerText;
     }
-    public void setImagePosition(String imagePosition) {
-        this.imagePosition = imagePosition;
+    public void setAnswerText(String answer) {
+        this.answerText = answer;
     }
-    public String getImageScale() {
-        return imageScale;
+     public String getQuestionImageUrl() {
+        return questionImageUrl;
     }
-    public void setImageScale(String imageScale) {
-        this.imageScale = imageScale;
+    public void setQuestionImageUrl(String questionImageUrl) {
+        this.questionImageUrl = questionImageUrl;
+    }
+    public String getQuestionImagePosition() {
+        return questionImagePosition;
+    }
+    public void setQuestionImagePosition(String questionImagePosition) {
+        this.questionImagePosition = questionImagePosition;
+    }
+    public String getQuestionImageScale() {
+        return questionImageScale;
+    }
+    public void setQuestionImageScale(String questionImageScale) {
+        this.questionImageScale = questionImageScale;
+    }
+    public String getAnswerImageUrl() {
+        return answerImageUrl;
+    }
+    public void setAnswerImageUrl(String answerImageUrl) {
+        this.answerImageUrl = answerImageUrl;
+    }
+    public String getAnswerImagePosition() {
+        return answerImagePosition;
+    }
+    public void setAnswerImagePosition(String answerImagePosition) {
+        this.answerImagePosition = answerImagePosition;
+    }
+    public String getAnswerImageScale() {
+        return answerImageScale;
+    }
+    public void setAnswerImageScale(String answerImageScale) {
+        this.answerImageScale = answerImageScale;
     }
 
 
