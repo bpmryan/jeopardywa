@@ -14,7 +14,7 @@ public class QnA {
     @Id
     private String qnaId;
     private String categoryId;
-    private int pointValue;
+    private int ptValue;
     private String questionId;
     private String answerId; 
     private String questionText;
@@ -42,11 +42,11 @@ public class QnA {
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
     }
-    public int getPointValue() {
-        return pointValue;
+    public int getPtValue() {
+        return ptValue;
     }
-    public void setPointValue(int pointValue) {
-        this.pointValue = pointValue;
+    public void setPtValue(int pointValue) {
+        this.ptValue = pointValue;
     }
     public String getQuestionId() {
         return questionId;

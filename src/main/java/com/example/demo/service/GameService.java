@@ -50,7 +50,7 @@ public class GameService {
                     q.setCategoryId(cat.getCategoryId());
 
                     // Other data being sent to db
-                    q.setPointValue(qnadto.ptValue != null ? qnadto.ptValue : 0);
+                    q.setPtValue(qnadto.ptValue != null ? qnadto.ptValue : 0);
                     q.setQuestionText(qnadto.questionText);
                     q.setAnswerText(qnadto.answerText);
 

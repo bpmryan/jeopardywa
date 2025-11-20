@@ -10,10 +10,10 @@ public class Category {
     // private methods to write to db (name: JeopardyCategory)
     @Id
     private String categoryId;
+    private String gameId;
     private String categoryName;
     private String bkgColor;
     private String textColor;
-    private String gameId;
 
     // spring boot apparently needs no-args constructor
     public Category() {
@@ -25,6 +25,13 @@ public class Category {
     // attributes/columns
     public String getCategoryId() {
         return categoryId;
+    }
+      public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
     }
 
     public void setCategoryId(String categoryId) {
@@ -55,12 +62,6 @@ public class Category {
         this.textColor = textColor;
     }
 
-    public String getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
-    }
+  
 
 }

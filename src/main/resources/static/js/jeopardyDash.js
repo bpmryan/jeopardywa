@@ -9,7 +9,7 @@
 
 const gameCardString =    
     `<div class="card">
-            <label>Game</label>
+            <label class="card-label"></label>
             <div class="cardOptions">
                 <button class="">Edit</button>
                 <button class="">Play</button>
@@ -19,4 +19,4 @@ const gameCardString =
         </div>`;
 
 const gameContainer = document.querySelector("gameScene");
-gameContainer.innerHTML = gameCardString; //Erase loading with gameCardString
+gameContainer.innerHTML = gameCardString; //replace loading with gameCardString
