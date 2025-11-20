@@ -43,17 +43,30 @@ document.addEventListener("click" , async (event) => {
     qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
   }
 
+  // This occurs when "Add Question & Answer" is clicked (To add numbers to the question from renumberQnA function)
+  if (event.target.classList.contains("addQnABtn")) {
+    const categoryCard = event.target.closest(".categoryCard");
+    const qnaContainer = categoryCard.querySelector(".qnaContainer");
+
+    const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
+    qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
+
+    renumberQnA(categoryCard);
+  }
+
   // Delete category
   // Later create a warning to allow user to check if they want to 
   if (event.target.classList.contains("deleteCategoryBtn")) {
     event.target.closest(".categoryCard").remove();
   }
 
-  // Delete QnA
+  // Delete QnA after clicking the delete button
   // Later create a warning to allow user to check if they want to 
   if (event.target.classList.contains("deleteQnABtn")) {
+    const categoryCard = event.target.closest(".catgeoryCard");
     event.target.closest(".qnaCard").remove();
-  } 
+    renumberQnA(categoryCard);
+  }
 
   // Collapse Category
   if (event.target.classList.contains("collapseCategory")) {
@@ -81,9 +94,8 @@ document.addEventListener("click" , async (event) => {
 
 
 // Asynec functions makes it return a promise and saves category data to db
-// Saves only the things in the cateogry cards 
-
-/* 
+async function saveAll() {
+  /* 
  * Searches through every category card in the game creation page (gameContent.html)
  * extracts name, bkgcolor, textColor
  * builds js array with that data 
@@ -91,12 +103,46 @@ document.addEventListener("click" , async (event) => {
  * 
 */
 // If anything goes wrong when writing to db CHECK HERE as well
-async function saveAllCategory() {
-  const categories = [...document.querySelectorAll(".catgeoryCard")].map(card => ({
-    categoryName: card.querySelector(".categoryName").value,
-    bkgColor: card.querySelector(".categoryBkgColor").value,
-    textColor: card.querySelector(".categoryTextColor").value,
-  }));
+  const gaemData = {categories: [] };
+
+    document.querySelectorAll(".catgeoryCard").forEach(categoryCard => {
+      const categories = {
+        categoryName: card.querySelector(".categoryName").value,
+        bkgColor: card.querySelector(".bgkColor").value,
+        textColor: card.querySelector(".textColor").value,
+        gameId: []
+      };
+
+    categoryCard.querySelectorAll(".qnaCard").forEach(qnaCard => {
+      qnaList.push({
+         // Function that helps send the QnA data over to db
+        // Saves QnA in every category
+        /* 
+        * It still looks at all categories 
+        * Extracts the category name
+        * Extacts all user inputs
+        * packs it into a json list 
+        * sends it over to spring boot api
+        */
+        categoryId,
+        pointValue: parseInt(doucment.querySelectorAll(".ptValue")).value,
+        question: doucment.querySelectorAll(".questionText").value,
+        answer: doucment.querySelectorAll(".answerText").value,
+
+       
+        // question image fields
+        questionImageUrl: qnaCard.querySelector(".questionImageUrl").value || null,
+        questionImagePosition: qnaCard.querySelector(".questionImagePosition").value || null,
+        questionImageScale: qnaCard.querySelector(".questionImageScale").value || null,
+
+        // answer image fields
+        answerImageUrl: qnaCard.querySelector(".answerImageUrl").value || null,
+        answerImagePosition: qnaCard.querySelector(".answerImagePosition").value || null,
+        answerImageScale: qnaCard.querySelector(".answerImageScale").value || null,
+      });
+    });
+    gaemData.categories.push(category);
+  });
 
   // await is the promise part of the function
   await fetch("/api/categories/saveAll", {
@@ -104,42 +150,14 @@ async function saveAllCategory() {
     headers: { "Content-Type": "application/json" }, //server of body is declared as json
     body: JSON.stringify(categories), // data is sent to the server
   });
+
+  console.log("Save entire game:", gameData);
 }
 
-
-
-// Function that helps send the QnA data over to db
-// Saves only the QnA in every category
-/* 
- * It still looks at all categories 
- * Extracts the category name
- * Extacts all user inputs
- * packs it into a json list 
- * sends it over to spring boot api
-*/
-
-async function saveAllQnA() {
-  const output = [];
-
-  document.querySelectorAll(".categoryCard").forEach(categoryCard => {
-    const categoryName = categoryCard.querySelector(".categoryName").value;
-
-    categoryCard.querySelectorAll(".qnaCard").forEach(qnaCard => {
-      output.push({
-        categoryName,
-        pointValue: parseInt(doucment.getElementById("pointValue")).value,
-        question: doucment.getElementById("questionText").value,
-        answer: doucment.getElementById("answerText").value,
-        imageUrl: document.getElementById("imageUrl").value,
-        imagePosition: document.getElementById("imagePosition").value,
-        imageScale: document.getElementById("imageScale").value,
-      });
-    });
-  });
-  
-  await fetch("/api/qna", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(output),
-  });
+// Adds a number to every question in each category
+function renumberQnA(categoryCard) {
+  const qnaCarda = categoryCard.querySelectorAll(".qnaCard");
+  qnaCards.forEach((card, index) => {
+    card.querySelector(".qnaTitle").textContent = `Question ${index + 1}`;
+  }) 
 }

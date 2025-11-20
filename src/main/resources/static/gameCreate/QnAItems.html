@@ -1,5 +1,8 @@
 <!-- Card that goes to gameContent.html -->
 <div class="qnaCard">
+
+    <div class="qnaTitle">Question #</div>
+
     <!-- Place for user to input point value of the question -->
     <div>
         <label for="ptValue">Point value</label>
@@ -11,7 +14,7 @@
     <!-- Place for user to add question -->
     <div>
         <label for="question">Question</label>
-        <textarea class="questionText" rows="5" cols="30" name="question" placeholder="Enter a question""></textarea>
+        <textarea id="questionText" rows="5" cols="30" name="question" placeholder="Enter a question""></textarea>
     </div>
 
     <br>
@@ -20,16 +23,16 @@
     <div>
         <label for="imageQuestion">Image to question (optional):</label>
         <br>
-        <button class="browseQuestionImg">Browse</button>
-        <input type="text" class="questionImageUrl" placeholder="path or URL">
+        <button id="browseQuestionImg">Browse</button>
+        <input type="text" id="questionImageUrl" placeholder="path or URL">
     </div>
 
     <br>
 
     <!-- Place for user to adjust the size of the question image -->
     <div>
-        <select>
-            <option value="-position-"></option>
+        <select class="questionImagePosition">
+            <option value="position">-Choose a position-</option>
             <option value="top">top</option>
             <option value="bottom">bottom</option>
             <option value="left">left</option>
@@ -48,7 +51,7 @@
     <!-- Place for user to add answer to question -->
     <div>
         <label>Answer</label>
-        <textarea name="answer" rows="5" cols="30" placeholder="Enter answer"></textarea>
+        <textarea id="answerText" rows="5" cols="30" placeholder="Enter answer"></textarea>
     </div>
 
     <br>
@@ -65,8 +68,8 @@
 
     <!-- Place for user to adjust the size of the question image -->
     <div>
-        <select>
-            <option value="-position-"></option>
+        <select class="answerImagePosition">
+            <option value="position">-Choose a position-</option>
             <option value="top">top</option>
             <option value="bottom">bottom</option>
             <option value="left">left</option>
