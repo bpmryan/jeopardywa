@@ -19,12 +19,17 @@ public class GameService {
     @Autowired
     private QnARepo qnaRepo;
 
+    // Returns a generated id of gameId
+    private String genId(String prefix, int len) {
+        return prefix + String.format("%05d", (int)(Math.random()*100000)); // Generate GameId here
+    }
+
     // Function that saves whole game to db
     public void saveGame(GameDTO game) {
         // if incoming gameId == null, server generates
         String gameId = game.gameId;
         if (gameId == null || gameId.isEmpty()) {
-            gameId = "G" + String.format("%05d", (int)(Math.random()*100000)); // Generate GameId here
+            gameId = genId("G", 5);
         }
 
         // cat stores all category information
