@@ -22,9 +22,9 @@ public class GameController {
 
     @PostMapping("/saveAll")
     public ResponseEntity<String> saveAll (@RequestBody GameDTO game) {
-        gameService.saveGame(game);
-        
-        return ResponseEntity.ok("Game saved");
+        String gameId = gameService.saveGame(game);
+        // Returns success response
+        return ResponseEntity.ok("Save gameId= " + gameId);
     }
     
 }
