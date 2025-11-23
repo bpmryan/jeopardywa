@@ -25,7 +25,7 @@ public class GameService {
     }
 
     // Function that saves whole game to db
-    public void saveGame(GameDTO game) {
+    public String saveGame(GameDTO game) {
         // if incoming gameId == null, server generates
         String gameId = game.gameId;
         if (gameId == null || gameId.isEmpty()) {
@@ -74,7 +74,6 @@ public class GameService {
                 }
             }
         }
-
-
+        return gameId;
     }
 }
