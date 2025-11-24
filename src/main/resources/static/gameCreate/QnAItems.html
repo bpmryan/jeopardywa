@@ -1,12 +1,11 @@
 <!-- Card that goes to gameContent.html -->
-<div class="qnaCard">
-
+<div class="qnaCard" style="border:1px solid #444;padding:8px;margin-bottom:8px;">
     <div class="qnaTitle">Question #</div>
 
     <!-- Place for user to input point value of the question -->
     <div>
         <label for="ptValue">Point value</label>
-        <input type="number" id="ptValue" name="ptValue" class="input_field" placeholder="200" required>
+        <input type="number" class="ptValue" placeholder="200" required>
     </div>
 
     <br>
@@ -14,14 +13,14 @@
     <!-- Place for user to add question -->
     <div>
         <label for="question">Question</label>
-        <textarea id="questionText" rows="5" cols="30" name="question" placeholder="Enter a question""></textarea>
+        <textarea class="questionText" rows="5" cols="30" placeholder="Enter a question"></textarea>
     </div>
 
     <br>
 
     <!-- Place for user to add image to question -->
     <div>
-        <label for="imageQuestion">Image to question (optional):</label>
+        <label>Image to question (optional):</label>
         <br>
         <button id="browseQuestionImg">Browse</button>
         <input type="text" id="questionImageUrl" placeholder="path or URL">
