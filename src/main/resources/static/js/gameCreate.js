@@ -2,10 +2,12 @@
 // question.className('question');
 // document.getElementById('questionContainer').appendChild(question);
 
-// load html partail into a string 
+const { response } = require("express");
+
+// load html partail into a string
 async function loadPartial(path) {
   const response = await fetch(path);
-  if (!response.ok) throw new Error('Failed to load ' + path);
+  if (!response.ok) throw new Error("Failed to load " + path);
   return await response.text();
 }
 
@@ -13,18 +15,17 @@ async function loadPartial(path) {
 function renumberQnA(categoryCard) {
   const qnaCard = categoryCard.querySelectorAll(".qnaCard");
   qnaCard.forEach((card, index) => {
+    const title = card.querySelector(".qnaTitle");
     card.querySelector(".qnaTitle").textContent = `Question ${index + 1}`;
-  }); 
+  });
 }
 
 // Adjust image size
 function updateRangeDisplays(container) {
-  container.querySelectorAll('input[type="range"]').forEach(range => {
+  container.querySelectorAll('input[type="range"]').forEach((range) => {
     const label = range.nextElementSibling;
-    if (label && label.classList.contains('questionImageScaleValue') || label && label.classList.contains('answerImageScaleValue')) {
-      label.textContent = range.value;
-    }
-    range.addEventListener('input', () => {
+    if (label) label.textContent = range.value;
+    range.addEventListener("input", () => {
       if (label) label.textContent = range.value;
     });
   });
@@ -41,11 +42,13 @@ Part didn't initially work because
 
 document.getElementById("addCategory").addEventListener("click", async () => {
   const html = await loadPartial("../gameCreate/CategoryItem.html");
-  document.getElementById("mainContainer").insertAdjacentHTML("beforeend", html);
+  document
+    .getElementById("mainContainer")
+    .insertAdjacentHTML("beforeend", html);
 });
 
 // event delegation
-document.addEventListener("click" , async (event) => {
+document.addEventListener("click", async (event) => {
   const target = event.target;
 
   // Add QnA inside category
@@ -54,7 +57,7 @@ document.addEventListener("click" , async (event) => {
     const categoryCard = event.target.closest(".categoryCard");
     if (!categoryCard) return;
 
-     // action to load up QnAItems.html
+    // action to load up QnAItems.html
     const qnaContainer = categoryCard.querySelector(".qnaContainer");
     if (!qnaContainer) return;
 
@@ -65,24 +68,26 @@ document.addEventListener("click" , async (event) => {
   }
 
   // Delete category
-  // Later create a warning to allow user to check if they want to 
-  if (event.target.classList.contains("deleteCategoryBtn")) {
-    event.target.closest(".categoryCard").remove();
+  // Later create a warning to allow user to check if they want to
+  if (target.classList.contains("deleteCategoryBtn")) {
+    const c = target.closest(".categoryCard");
+    if (c) c.remove;
   }
 
   // Delete QnA after clicking the delete button
-  // Later create a warning to allow user to check if they want to 
-  if (event.target.classList.contains("deleteQnABtn")) {
-    const categoryCard = event.target.closest(".catgeoryCard");
-    event.target.closest(".qnaCard").remove();
-    renumberQnA(categoryCard);
+  // Later create a warning to allow user to check if they want to
+  if (target.classList.contains("deleteQnABtn")) {
+    const q = target.closest(".qnaCard");
+    const cat = target.closest(".categoryCard");
+    if (q) q.remove();
+    if (cat) renumberQnA(cat);
   }
 
   // Collapse Category
-  if (event.target.classList.contains("collapseCategory")) {
-    // looks at css classes 
-    const card = event.target.closest(".categoryCard");
-    card.classList.toggle("collapsed");
+  if (target.classList.contains("collapseCategory")) {
+    // looks at css classes
+    const card = target.closest(".categoryCard");
+    if (!card) return;
 
     // selects the first element/tag in the html and matches it with the specified css selector
     // returns the first element that matches the css selector
@@ -95,72 +100,88 @@ document.addEventListener("click" , async (event) => {
     block = visible
     none = invisible
     */
-    qnaContainer.style.display = qnaContainer.style.display === "none" ? "block" : "none";
-
-    settings.style.display = settings.style.display === "none" ? "flex" : "none";
+    qnaContainer.style.display =
+      qnaContainer.style.display === "none" ? "block" : "none";
+    settings.style.display =
+      settings.style.display === "none" ? "flex" : "none";
   }
 });
 
 // Asynec functions makes it return a promise and saves category data to db
 async function saveAll() {
-  /* 
- * Searches through every category card in the game creation page (gameContent.html)
- * extracts name, bkgcolor, textColor
- * builds js array with that data 
- * sends array to spring boot in the "await" section 
- * 
-*/
-// If anything goes wrong when writing to db CHECK HERE as well
-  const gameData = {categories: [] };
+  /*
+   * Searches through every category card in the game creation page (gameContent.html)
+   * extracts name, bkgcolor, textColor
+   * builds js array with that data
+   * sends array to spring boot in the "await" section
+   *
+   */
+  // If anything goes wrong when writing to db CHECK HERE as well
+  const gameData = { gameId: null, categories: [] };
 
-    document.querySelectorAll(".catgeoryCard").forEach(categoryCard => {
-      const category = {
-        categoryName: card.querySelector(".categoryName").value || "",
-        bkgColor: card.querySelector(".bgkColor").value || "",
-        textColor: card.querySelector(".textColor").value || "",
-        gameId: []
-      };
+  document.querySelectorAll(".catgeoryCard").forEach((categoryCard) => {
+    const category = {
+      categoryName: card.querySelector(".categoryName").value || "",
+      bkgColor: card.querySelector(".bgkColor").value || "",
+      textColor: card.querySelector(".textColor").value || "",
+      gameId: [],
+    };
 
-    categoryCard.querySelectorAll(".qnaCard").forEach(qnaCard => {
+    categoryCard.querySelectorAll(".qnaCard").forEach((qnaCard) => {
       category.qnaList.push({
         // Function that helps send the QnA data over to db
         // Saves QnA in every category
-        /* 
-        * It still looks at all categories 
-        * Extracts the category name
-        * Extacts all user inputs
-        * packs it into a json list 
-        * sends it over to spring boot api
-        */
+        /*
+         * It still looks at all categories
+         * Extracts the category name
+         * Extacts all user inputs
+         * packs it into a json list
+         * sends it over to spring boot api
+         */
         // categoryId,
-        pointValue: parseInt(doucment.querySelectorAll(".ptValue")).value,
-        question: doucment.querySelectorAll(".questionText").value,
-        answer: doucment.querySelectorAll(".answerText").value,
+        pointValue: Number(qnaCard.querySelector(".ptValue"))?.value || 0,
+        question: qnaCard.querySelector(".questionText")?.value || "",
+        answer: qnaCard.querySelector(".answerText")?.value || "",
 
-       
         // question image fields
-        questionImageUrl: qnaCard.querySelector(".questionImageUrl").value || null,
-        questionImagePosition: qnaCard.querySelector(".questionImagePosition").value || null,
-        questionImageScale: qnaCard.querySelector(".questionImageScale").value || null,
+        questionImage: {
+          questionImageUrl:
+            qnaCard.querySelector(".questionImageUrl")?.value || null,
+          questionImagePosition:
+            qnaCard.querySelector(".questionImagePosition")?.value || null,
+          questionImageScale:
+            qnaCard.querySelector(".questionImageScale")?.value || null,
+        },
 
         // answer image fields
-        answerImageUrl: qnaCard.querySelector(".answerImageUrl").value || null,
-        answerImagePosition: qnaCard.querySelector(".answerImagePosition").value || null,
-        answerImageScale: qnaCard.querySelector(".answerImageScale").value || null,
+        answerImage: {
+          answerImageUrl:
+            qnaCard.querySelector(".answerImageUrl")?.value || null,
+          answerImagePosition:
+            qnaCard.querySelector(".answerImagePosition")?.value || null,
+          answerImageScale:
+            qnaCard.querySelector(".answerImageScale")?.value || null,
+        },
       });
     });
     gaemData.categories.push(category);
   });
 
   // await is the promise part of the function
-  await fetch("/api/categories/saveAll", {
+  const resp = await fetch("/api/categories/saveAll", {
     method: "POST", // specified as post request
     headers: { "Content-Type": "application/json" }, //server of body is declared as json
     body: JSON.stringify(categories), // data is sent to the server
   });
 
-  console.log("Save entire game:", gameData);
+  if (!response.ok) {
+    const text = await response.text();
+    console.log("Save failed", text);
+    alert("Save failed" + text);
+  } else {
+    console.log("Save entire game:", gameData); // comment it out if doesn't work
+    alert("Saved successfully");
+  }
 }
 
 document.getElementById("saveGameBtn").addEventListener("click", saveAll);
-
