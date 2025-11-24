@@ -69,7 +69,7 @@ document.addEventListener("click", async (event) => {
   // Later create a warning to allow user to check if they want to
   if (target.classList.contains("deleteCategoryBtn")) {
     const c = target.closest(".categoryCard");
-    if (c) c.remove;
+    if (c) c.remove();
   }
 
   // Delete QnA after clicking the delete button
