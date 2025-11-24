@@ -2,8 +2,6 @@
 // question.className('question');
 // document.getElementById('questionContainer').appendChild(question);
 
-const { response } = require("express");
-
 // load html partail into a string
 async function loadPartial(path) {
   const response = await fetch(path);
