@@ -10,3 +10,6 @@ loginForm.addEventListener("submit", (e) => {
     console.log("Password:", password.value);
     // process and send to API
 })
+
+// TODO: Probably need to add more to this
+localStorage.setItem("userId", foundUser.userId);
