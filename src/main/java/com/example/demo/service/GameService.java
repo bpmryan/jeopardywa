@@ -6,12 +6,17 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.GameDTO;
 
 import model.Category;
+import model.Game;
 import model.QnA;
 import repo.CategoryRepo;
+import repo.GameRepo;
 import repo.QnARepo;
 
 @Service
 public class GameService {
+
+    @Autowired
+    private GameRepo gameRepo;
     
     @Autowired
     private CategoryRepo categoryRepo;
@@ -19,61 +24,52 @@ public class GameService {
     @Autowired
     private QnARepo qnaRepo;
 
-    // Returns a generated id of gameId
-    private String genId(String prefix, int len) {
-        return prefix + String.format("%05d", (int)(Math.random()*100000)); // Generate GameId here
-    }
+    // Save full game structure
+    public String saveGame(GameDTO dto) {
 
-    // Function that saves whole game to db
-    public String saveGame(GameDTO game) {
-        // if incoming gameId == null, server generates
-        String gameId = game.gameId;
-        if (gameId == null || gameId.isEmpty()) {
-            gameId = genId("G", 5);
-        }
+        // Create Game entry
+        Game game = new Game();
+        String gameId = "G" + String.format("%05d", (int)(Math.random() * 100000)); // Generate GameId here
+        game.setGameId(gameId);
+        game.setUserId(dto.getUserId());
+        gameRepo.save(game);
 
-        // cat stores all category information
-        for (GameDTO.CatgeoryDTO c : game.categories) {
-            Category cat = new Category();
-            cat.setCategoryId("C" + String.format("%05d", (int)(Math.random()*100000))); // Generate CategoryId here
-            cat.setCategoryName(c.categoryName);
-            cat.setBkgColor(c.bkgColor);
-            cat.setTextColor(c.textColor);
-            cat.setGameId(gameId);
-            categoryRepo.save(cat);
+        // Save categories
+        dto.getCategories().forEach(catDTO -> {
+            Category category = new Category();
+            category.setCategoryId("C" + String.format("%05d", (int)(Math.random() * 100000)));
+            category.setCategoryName(catDTO.getCategoryName());
+            category.setBkgColor(catDTO.getBkgColor());
+            category.setTextColor(catDTO.getTextColor());
+            category.setGameId(gameId);
+            categoryRepo.save(category);
 
-            if (c.qna != null) {
-                for (GameDTO.QnADTO qnadto : c.qna) {
-                    QnA q = new QnA();
+            // Save QnA for this category
+            catDTO.getQna().forEach(qnaDTO -> {
+                QnA q = new QnA();
+                q.setQnaId("Q" + String.format("%05d", (int)(Math.random() * 100000)));
+                q.setCategoryId(category.getCategoryId());
+                q.setPtValue(qnaDTO.getPtValue());
+                q.setQuestionText(qnaDTO.getQuestionText());
+                q.setAnswerText(qnaDTO.getAnswerText());
 
-                    // generate ids for question, answer, and qna
-                    q.setQnaId("Q" + String.format("%05d", (int)(Math.random()*100000)));
-                    q.setQuestionId("QT" + String.format("%05d", (int)(Math.random()*10000)));
-                    q.setAnswerId("AN" + String.format("%05d", (int)(Math.random()*10000)));
-
-                    // Link to category
-                    q.setCategoryId(cat.getCategoryId());
-
-                    // Other data being sent to db
-                    q.setPtValue(qnadto.ptValue != null ? qnadto.ptValue : 0);
-                    q.setQuestionText(qnadto.questionText);
-                    q.setAnswerText(qnadto.answerText);
-
-                    // Image data being sent to db
-                    if (qnadto.questionImage != null) {
-                        q.setQuestionImageUrl(qnadto.questionImage.url);
-                        q.setQuestionImagePosition(qnadto.questionImage.position);
-                        q.setQuestionImageScale(qnadto.questionImage.scale);
-                    }
-                    if (qnadto.answerImage != null) {
-                        q.setAnswerImageUrl(qnadto.answerImage.url);
-                        q.setAnswerImagePosition(qnadto.answerImage.position);
-                        q.setAnswerImageScale(qnadto.answerImage.scale);
-                    }
-                    qnaRepo.save(q);
+                // Question image
+                if (qnaDTO.getQuestionImage() != null) {
+                    q.setQuestionImageUrl(qnaDTO.getQuestionImage().getUrl());
+                    q.setQuestionImagePosition(qnaDTO.getQuestionImage().getPosition());
+                    q.setQuestionImageScale(qnaDTO.getQuestionImage().getScale());
                 }
-            }
-        }
+
+                // Answer image
+                if (qnaDTO.getAnswerImage() != null) {
+                    q.setAnswerImageUrl(qnaDTO.getAnswerImage().getUrl());
+                    q.setAnswerImagePosition(qnaDTO.getAnswerImage().getPosition());
+                    q.setAnswerImageScale(qnaDTO.getAnswerImage().getScale());
+                }
+                qnaRepo.save(q);
+            });
+        });
+
         return gameId;
     }
 }
