@@ -1,59 +1,68 @@
 /*
-* Functions to present game
-*/
+ * Functions to present game
+ */
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const params = new URLSearchParams(window.location.search);
-    const gameId = params.get("gameId");
-    await loadBoard(gameId);
+  const params = new URLSearchParams(window.location.search);
+  const gameId = params.get("gameId");
+  // check to see if gameId doesn't exist
+  if (!gameId) {
+    document.getElementById("board").innerText = "No gameId provided";
+    return;
+  }
+  await loadBoard(gameId);
 });
 
 async function loadBoard(gameId) {
-    const response = await fetch(`/api/game/play/${gameId}`);
-    const data = await response.json();
+  const response = await fetch(`/api/game/play/${gameId}`);
+  if (!response.ok) {
+    console.error("Failed to load play data", await response.text());
+    return;
+  }
+  const data = await response.json();
+  document.getElementById("gameTitle").textContent =
+    data.gameName || "Jeopardy";
 
-    const board = document.getElementById("board");
-    board.innerHTML = "";
-    board.classList.add("gridBoard");
-    board.style.gridTemplateColumns = `repeat(${data.categories.length}, 1fr)`;
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  board.style.gridTemplateColumns = `repeat(${data.categories.length}, 1fr)`;
 
-    // Category headers
-    data.categories.forEach(cat => {
-        board.insertAdjacentHTML("beforeend",
-            `<div class="categoryHeader">${cat.categoryName}</div>`
-        );
-    });
+  // Category headers
+  data.categories.forEach((cat) => {
+    const h = document.createElement("div");
+    h.className = "categoryHeader";
+    h.textContent = cat.categoryName;
+    board.appendChild(h);
+  });
 
-    // Generate rows by point value
-    const maxRows = Math.max(...data.categories.map(c => c.qna.length));
+  // Generate rows by point value
+  const maxRows = Math.max(...data.categories.map((c) => c.qna.length));
 
-    for (let row = 0; row < maxRows; row++) {
-        for (let col = 0; col < data.categories.length; col++) {
-            const q = data.categories[col].qna[row];
-            if (!q) {
-                board.insertAdjacentHTML("beforeend", `<div class="emptyCell"></div>`);
-                continue;
-            }
+  for (let row = 0; row < maxRows; row++) {
+    for (let col = 0; col < data.categories.length; col++) {
+      const q = data.categories[col].qna[row];
+      if (!q) {
+        const empty = document.createElement("div");
+        empty.className = "emptyCell";
+        board.appendChild(empty);
+        continue;
+      }
 
-            board.insertAdjacentHTML("beforeend", `
-                <div class="qnaCell" data-question='${JSON.stringify(q)}'>
-                    ${q.pointValue}
-                </div>
-            `);
-        }
+      const cell = document.createElement("div");
+      cell.className = "qnaCell";
+      cell.dataset.qna = JSON.stringify(q);
+      cell.textContent = q.pointValue;
+      cell.addEventListener("click", () => openModal(q, cell));
+      board.insertAdjacentHTML(cell);
     }
-
-    // Click handler to reveal Q/A
-    document.querySelectorAll(".qnaCell").forEach(cell => {
-        cell.addEventListener("click", () => openModal(JSON.parse(cell.dataset.question)));
-    });
+  }
 }
 
-function openModal(qna) {
-    const modal = document.getElementById("modal");
-    const content = document.getElementById("modalContent");
+function openModal(q, cell) {
+  const modal = document.getElementById("modal");
+  const content = document.getElementById("modalContent");
 
-    content.innerHTML = `
+  content.innerHTML = `
         <h2>${qna.pointValue} Points</h2>
         <p><strong>Question:</strong> ${qna.question}</p>
         ${qna.questionImageUrl ? `<img src="${qna.questionImageUrl}" />` : ""}
@@ -62,9 +71,19 @@ function openModal(qna) {
         ${qna.answerImageUrl ? `<img src="${qna.answerImageUrl}" />` : ""}
     `;
 
-    modal.classList.remove("hidden");
+  modal.classList.remove("hidden");
+
+  document.getElementById("showAnswerBtn").onclick = () => {
+    document.getElementById("answerBox").style.display = "block";
+  };
+
+// Mark cell/question box as disabled when answered 
+  if (cell) {
+    cell.classList.add("answered");
+    cell.removeEventListener("click", () => openModal(q, cell));
+  }
 }
 
 document.getElementById("closeModal").addEventListener("click", () => {
-    document.getElementById("modal").classList.add("hidden");
+  document.getElementById("modal").classList.add("hidden");
 });
