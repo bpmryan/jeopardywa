@@ -1,5 +1,8 @@
 use jeopardywebapp;
 
+alter table Game
+    add column gameName varchar(100) default 'Untitled Game';
+
 select * from UserInfo;
 select * from Game;
 select * from JeopardyCategory;
