@@ -33,6 +33,7 @@ public class GameController {
     @Autowired
     private GameRepo gameRepo;
 
+    // Saves game, categories, and qna
     @PostMapping("/saveAll")
     public ResponseEntity<String> saveAll (@RequestBody GameDTO game) {
         String gameId = gameService.saveGame(game);
@@ -40,11 +41,13 @@ public class GameController {
         return ResponseEntity.ok("Save gameId= " + gameId);
     }
 
+    // retrieves all games linked to the userIf from the user table
     @GetMapping("/user/{userId}")
     public List<Game> getGamesbyUser(@PathVariable String userId) {
         return gameRepo.findByUserId(userId);
     }
     
+    // Delete the whole game
     @DeleteMapping("/{gameId}")
     public ResponseEntity<?> deleteGame(@PathVariable String gameId) {
         gameRepo.deleteById(gameId);
