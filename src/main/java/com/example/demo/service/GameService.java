@@ -103,16 +103,16 @@ public class GameService {
             GameFullDTO.CategoryDTO cat = new GameFullDTO.CategoryDTO();
             cat.categoryId = c.getCategoryId();
             cat.categoryName = c.getCategoryName();
-            cat.bkgColor = c.getBgkColor();
+            cat.bkgColor = c.getBkgColor();
             cat.textColor = c.getTextColor();
 
             List<QnA> qnas = qnaRepo.findByCategoryId(c.getCategoryId());
             for (QnA q : qnas) {
                 GameFullDTO.QnADTO qdto = new GameFullDTO.QnADTO();
                 qdto.qnaId = q.getQnaId();
-                qdto.pointValue = q.getPointValue();
-                qdto.question = q.getQuestion();
-                qdto.answer = q.getAnswer();
+                qdto.pointValue = q.getPtValue();
+                qdto.question = q.getQuestionText();
+                qdto.answer = q.getAnswerText();
                 qdto.questionImageUrl = q.getQuestionImageUrl();
                 qdto.questionImagePosition = q.getQuestionImagePosition();
                 qdto.questionImageScale = q.getQuestionImageScale();
@@ -140,14 +140,14 @@ public class GameService {
             cat.categoryName = c.getCategoryName();
             List<QnA> qnas = qnaRepo.findByCategoryId(c.getCategoryId())
                         .stream()
-                        .sorted(Comparator.comparingInt(QnA::getPointValue))
+                        .sorted(Comparator.comparingInt(QnA::getPtValue))
                         .collect(Collectors.toList());
             for (QnA q : qnas) {
                 GamePlayDTO.QnADTO qdto = new GamePlayDTO.QnADTO();
                 qdto.qnaId = q.getQnaId();
-                qdto.pointValue = q.getPointValue();
-                qdto.question = q.getQuestion();
-                qdto.answer = q.getAnswer();
+                qdto.pointValue = q.getPtValue();
+                qdto.question = q.getQuestionText();
+                qdto.answer = q.getAnswerText();
                 qdto.questionImageUrl = q.getQuestionImageUrl();
                 qdto.answerImageUrl = q.getAnswerImageUrl();
                 cat.qna.add(qdto);
