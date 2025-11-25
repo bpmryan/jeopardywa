@@ -183,3 +183,60 @@ async function saveAll() {
 }
 
 document.getElementById("saveGameBtn").addEventListener("click", saveAll);
+
+// load current progress of users gameContent in gameCreate, only editing
+// Uses API to help load game data from db 
+// Calls on DOMContentLoaded
+document.addEventListener("DOMContentLoaded", async () => {
+  const params = new URLSearchParams(window.location.search);
+  const gameId = params.get("gameId");
+  if (gameId) await loadExistingGame(gameId);
+});
+
+async function loadExistingGame(gameId) {
+  const response = await fetch("/api/game/full/${gameId}");
+  if (!response.ok) {
+    console.error("Failed to load game", await response.text());
+    return;
+  }
+  const data = await response.json();
+
+  // clear container generate categories and qna in the grid
+  const main = document.getElementById("mainContainer");
+  main.innerHTML = "";
+
+  // loop that takes category data and display it
+  for (const cat of data.categories){
+    const categoryHTML = await loadPartial("gameCreate/components/CategoryItem.html");
+    main.insertAdjacentHTML("beforeend", categoryHTML);
+    const catgeoryCard = main.lastElementChild;
+
+    categoryCard.querySelector(".categoryName").value = cat.categoryName || "";
+    categoryCard.querySelector(".categoryBkgColor").value = cat.bkgColor || "#ffffff";
+    categoryCard.querySelector(".categoryTextColor").value = cat.textColor || "#000000";
+    categoryCard.dataset.categoryId = cat.categoryId; 
+
+    const qnaContainer = categoryCard.querySelector(".qnaContainer");
+
+    // loop that puts each qna with its correct category
+    for (const q of cat.qna) {
+      const qnaHTML = await loadPartial("/gameCreate/components/QnAItems.html");
+      qnaContainer.insertAdjacentHTML("beforeend", qnaHTML);
+      const qnaCard = qnaContainer.lastElementChild;
+
+      qnaCard.querySelector(".pointValue").value = q.pointValue || 0;
+      qnaCard.querySelector(".questionText").value = q.question || "";
+      qnaCard.querySelector(".answerText").value = q.answer || "";
+
+      qnaCard.querySelector(".questionImageUrl").value = q.questionImageUrl || "";
+      qnaCard.querySelector(".questionImagePosition").value = q.questionImagePosition || "";
+      qnaCard.querySelector(".questionImageScale").value = q.questionImageScale || "";
+
+      qnaCard.querySelector(".answerImageUrl").value = q.answerImageUrl || "";
+      qnaCard.querySelector(".answerImagePosition").value = q.answerImagePosition || "";
+      qnaCard.querySelector(".answerImageScale").value = q.answerImageScale || "";
+    }
+    renumberQnA(categoryCard);
+  }
+
+}

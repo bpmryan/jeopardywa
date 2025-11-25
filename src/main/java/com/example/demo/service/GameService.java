@@ -1,11 +1,15 @@
 package com.example.demo.service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.GameDTO;
+import com.example.demo.dto.GameFullDTO;
+import com.example.demo.dto.GamePlayDTO;
 
 import model.Category;
 import model.Game;
@@ -86,67 +90,70 @@ public class GameService {
         gameRepo.deleteById(gameId);
     }
 
-    // retrieve data to contiune editing the game when coming back 
+    // Load full game for edit mode
     public GameFullDTO loadFullGame(String gameId) {
-        Game game = gameRepo.findById(gameId).orElseThrow();
+        GameFullDTO out = new GameFullDTO();
+        Game g = gameRepo.findById(gameId).orElseThrow(() -> new RuntimeException("Game not found"));
+        out.gameId = g.getGameId();
+        out.userId = g.getUserId();
+        out.gameName = g.getGameName();
 
-        List<Category> categories = categoryRepo.findByGameId(gameId);
-
-        GameFullDTO dto = new GameFullDTO();
-        dto.gameId = game.getGameId();
-        dto.userId = game.getUserId();
-
-        for (Category c : categories) {
-            GameFullDTO.CategoryDTO catDTO = new GameFullDTO.CategoryDTO();
-            catDTO.categoryId = c.getCategoryId();
-            catDTO.categoryName = c.getCategoryName();
-            catDTO.bkgColor = c.getBkgColor();
-            catDTO.textColor = c.getTextColor();
+        List<Category> cats = categoryRepo.findByGameId(gameId);
+        for (Category c : cats) {
+            GameFullDTO.CategoryDTO cat = new GameFullDTO.CategoryDTO();
+            cat.categoryId = c.getCategoryId();
+            cat.categoryName = c.getCategoryName();
+            cat.bkgColor = c.getBgkColor();
+            cat.textColor = c.getTextColor();
 
             List<QnA> qnas = qnaRepo.findByCategoryId(c.getCategoryId());
             for (QnA q : qnas) {
                 GameFullDTO.QnADTO qdto = new GameFullDTO.QnADTO();
+                qdto.qnaId = q.getQnaId();
                 qdto.pointValue = q.getPointValue();
                 qdto.question = q.getQuestion();
                 qdto.answer = q.getAnswer();
                 qdto.questionImageUrl = q.getQuestionImageUrl();
+                qdto.questionImagePosition = q.getQuestionImagePosition();
+                qdto.questionImageScale = q.getQuestionImageScale();
                 qdto.answerImageUrl = q.getAnswerImageUrl();
-                catDTO.qna.add(qdto);
+                qdto.answerImagePosition = q.getAnswerImagePosition();
+                qdto.answerImageScale = q.getAnswerImageScale();
+                cat.qna.add(qdto);
             }
-
-            dto.categories.add(catDTO);
+            out.categories.add(cat);
         }
-
-        return dto;
+        return out;
     }
 
-    // Function to grab questions to present 
+    // Load for play mode (arranged per category, sorted by pointValue asc)
     public GamePlayDTO loadGameForPlay(String gameId) {
-        GamePlayDTO dto = new GamePlayDTO();
+        GamePlayDTO out = new GamePlayDTO();
+        Game g = gameRepo.findById(gameId).orElseThrow(() -> new RuntimeException("Game not found"));
+        out.gameId = g.getGameId();
+        out.gameName = g.getGameName();
 
-        List<Category> categories = categoryRepo.findByGameId(gameId);
-
-        for (Category c : categories) {
-            GamePlayDTO.CategoryDTO catDTO = new GamePlayDTO.CategoryDTO();
-            catDTO.categoryName = c.getCategoryName();
-
-            List<QnA> qnas = qnaRepo.findByCategoryId(c.getCategoryId());
-            qnas.sort(Comparator.comparingInt(QnA::getPointValue));
-
+        List<Category> cats = categoryRepo.findByGameId(gameId);
+        for (Category c : cats) {
+            GamePlayDTO.CategoryDTO cat = new GamePlayDTO.CategoryDTO();
+            cat.categoryId = c.getCategoryId();
+            cat.categoryName = c.getCategoryName();
+            List<QnA> qnas = qnaRepo.findByCategoryId(c.getCategoryId())
+                        .stream()
+                        .sorted(Comparator.comparingInt(QnA::getPointValue))
+                        .collect(Collectors.toList());
             for (QnA q : qnas) {
                 GamePlayDTO.QnADTO qdto = new GamePlayDTO.QnADTO();
+                qdto.qnaId = q.getQnaId();
                 qdto.pointValue = q.getPointValue();
                 qdto.question = q.getQuestion();
                 qdto.answer = q.getAnswer();
                 qdto.questionImageUrl = q.getQuestionImageUrl();
                 qdto.answerImageUrl = q.getAnswerImageUrl();
-                catDTO.qna.add(qdto);
+                cat.qna.add(qdto);
             }
-
-            dto.categories.add(catDTO);
+            out.categories.add(cat);
         }
-
-        return dto;
+        return out;
     }
-
 }

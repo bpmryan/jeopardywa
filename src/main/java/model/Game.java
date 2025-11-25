@@ -10,9 +10,10 @@ public class Game {
     
     @Id
     private String gameId;
-
     private String userId;
     private String gameName;
+
+    public Game() {}
 
     public String getGameId() {
         return gameId;
@@ -37,9 +38,5 @@ public class Game {
     public void setGameName(String gameName) {
         this.gameName = gameName;
     }
-
-    public Game() {}
-
-    
 
 }

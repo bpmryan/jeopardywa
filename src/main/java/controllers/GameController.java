@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.GameDTO;
+import com.example.demo.dto.GameFullDTO;
+import com.example.demo.dto.GamePlayDTO;
 import com.example.demo.service.GameService;
 
 import model.Game;
