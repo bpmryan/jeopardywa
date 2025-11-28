@@ -2,27 +2,32 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Play Jeopardy</title>
-    <link rel="stylesheet" href="/css/play.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/css/play.css" />
+  </head>
+  <body>
     <header>
-        <h1 id="gameTitle">Jeopardy</h1>
+      <h1 id="gameTitle">Jeopardy</h1>
+      <button id="backBtn">Back</button>
     </header>
 
-    <main>
-        <div id="board" class="gridBoard"></div>
-    </main>
+    <main id="boardContainer"></main>
 
-    <!-- simple modal -->
-     <div id="modal" class="hidden">
-        <div id="modalContent"></div>
-        <button id="closeModal">Close</button>
-     </div>
+    <!-- modal area -->
+    <div id="modal" class="hidden">
+      <div id="modalContent">
+        <h2 id="modalCategory"></h2>
+        <div id="modalQuestion"></div>
+        <div id="modalImage"></div>
+        <button id="revealAnswerBtn">Reveal Answer</button>
+        <div id="modalAnswer" class="hidden"></div>
+        <button id="closeModalBtn">Close</button>
+      </div>
+    </div>
 
-     <script src="/js/playGame.js" defer></script>
-</body>
+    <script src="/js/playGame.js" defer></script>
+  </body>
 </html>
