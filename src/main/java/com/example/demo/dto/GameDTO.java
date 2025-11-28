@@ -8,16 +8,19 @@ public class GameDTO {
     private String userId;
     private String gameId;
     private List<CategoryDTO> categories;
+    private String gameName;
 
     // Getters
     public String getUserId() { return userId; }
     public String getGameId() { return gameId; }
     public List<CategoryDTO> getCategories() { return categories; }
+    public String getGameName() { return gameName; }
 
     // Setters
     public void setUserId(String userId) { this.userId = userId; }
     public void setGameId(String gameId) { this.gameId = gameId; }
     public void setCategories(List<CategoryDTO> categories) { this.categories = categories; }
+    public void setGameName(String gameName) { this.gameName = gameName; }
 
 
     // category information being sent 
@@ -26,12 +29,15 @@ public class GameDTO {
         private String bkgColor;
         private String textColor;
         private List<QnADTO> qna;
+        private String categoryId;
 
+        public String getCategoryId() { return categoryId; }
         public String getCategoryName() { return categoryName; }
         public String getBkgColor() { return bkgColor; }
         public String getTextColor() { return textColor; }
         public List<QnADTO> getQna() { return qna; }
 
+        public void setCategoryId(String categoryId) { this.categoryId = categoryId; }
         public void setCategoryName(String name) { this.categoryName = name; }
         public void setBkgColor(String c) { this.bkgColor = c; }
         public void setTextColor(String c) { this.textColor = c; }
@@ -41,18 +47,21 @@ public class GameDTO {
 
     // qna information being sent
     public static class QnADTO {
+        private String qnaId;
         private Integer ptValue;
         private String questionText;
         private String answerText;
         private ImageDTO questionImage;
         private ImageDTO answerImage;
 
+        public String getQnaId() { return qnaId; }
         public Integer getPtValue() { return ptValue; }
         public String getQuestionText() { return questionText; }
         public String getAnswerText() { return answerText; }
         public ImageDTO getQuestionImage() { return questionImage; }
         public ImageDTO getAnswerImage() { return answerImage; }
 
+        public void setQnaId(String qnaId) { this.qnaId = qnaId; }
         public void setPtValue(Integer v) { this.ptValue = v; }
         public void setQuestionText(String t) { this.questionText = t; }
         public void setAnswerText(String t) { this.answerText = t; }
