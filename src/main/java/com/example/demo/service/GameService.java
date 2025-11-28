@@ -32,44 +32,47 @@ public class GameService {
     @Autowired
     private QnARepo qnaRepo;
 
-    // Save full game structure
+    // Create or update entire game. Keeps DB in sync with incoming DTO.
     public String saveGame(GameDTO dto) {
 
+        // determines whether the game needs to be updated or created
         Game game;
         String gameId;
 
-        // Create Game entry
-        // TODO: add attribute for gameName later
-        // CREATE MODE
+        // Create game
+        // generate gameId 
         if (dto.getGameId() == null || dto.getGameId().isBlank()) {
             gameId = "G" + String.format("%05d", (int) (Math.random() * 100000));
             game = new Game();
             game.setGameId(gameId);
             game.setUserId(dto.getUserId());
         }
-        // UPDATE MODE
+        // update game
+        // else checks for if there is an existing gameId 
         else {
             gameId = dto.getGameId();
             game = gameRepo.findById(gameId)
                     .orElseThrow(() -> new RuntimeException("Game not found: " + gameId));
         }
 
+        // sets the name of the jeopardy (can return null)
         game.setGameName(dto.getGameName());
         gameRepo.save(game);
 
-        // Track categoryIds to remove usused ones
+        // fetch existing categories (via categorgId) for removal detection
         List<Category> existingCategories = categoryRepo.findByGameId(gameId);
         Set<String> incomingCategoryIds = new HashSet<>();
 
+        // iterate incoming categories
         for (GameDTO.CategoryDTO catDTO : dto.getCategories()) {
             Category category;
 
-            // UPDATE existing category
+            // update mode for category
             if (catDTO.getCategoryId() != null && !catDTO.getCategoryId().isBlank()) {
                 category = categoryRepo.findById(catDTO.getCategoryId())
                         .orElseThrow(() -> new RuntimeException("Category missing: " + catDTO.getCategoryId()));
             }
-            // CREATE new category
+            // create new categoryId and category
             else {
                 category = new Category();
                 category.setCategoryId("C" + String.format("%05d", (int) (Math.random() * 100000)));
@@ -80,10 +83,9 @@ public class GameService {
             category.setBkgColor(catDTO.getBkgColor());
             category.setTextColor(catDTO.getTextColor());
             categoryRepo.save(category);
-
             incomingCategoryIds.add(category.getCategoryId());
 
-            // ----- PROCESS QNA -----
+            // process QnA inside category
             List<QnA> existingQnA = qnaRepo.findByCategoryId(category.getCategoryId());
             Set<String> incomingQnAIds = new HashSet<>();
 
@@ -91,18 +93,20 @@ public class GameService {
 
                 QnA q;
 
-                // UPDATE existing QnA
+                // function is similar to category section above
+                // update existing QnA
                 if (qdto.getQnaId() != null && !qdto.getQnaId().isBlank()) {
                     q = qnaRepo.findById(qdto.getQnaId())
                             .orElseThrow(() -> new RuntimeException("Missing QnA: " + qdto.getQnaId()));
                 }
-                // CREATE new QnA
+                // create new QnAId and QnA
                 else {
                     q = new QnA();
                     q.setQnaId("Q" + String.format("%05d", (int) (Math.random() * 100000)));
                     q.setCategoryId(category.getCategoryId());
                 }
 
+                // map DTO -> entity 
                 q.setPtValue(qdto.getPtValue());
                 q.setQuestionText(qdto.getQuestionText());
                 q.setAnswerText(qdto.getAnswerText());
@@ -123,7 +127,7 @@ public class GameService {
                 incomingQnAIds.add(q.getQnaId());
             }
 
-            // DELETE removed QnA
+            // delete removed QnA in respective category
             for (QnA old : existingQnA) {
                 if (!incomingQnAIds.contains(old.getQnaId())) {
                     qnaRepo.delete(old);
@@ -131,7 +135,7 @@ public class GameService {
             }
         }
 
-        // DELETE removed categories
+        // delete removed categories along with their qna
         for (Category oldCat : existingCategories) {
             if (!incomingCategoryIds.contains(oldCat.getCategoryId())) {
                 qnaRepo.deleteByCategoryId(oldCat.getCategoryId());
@@ -147,7 +151,7 @@ public class GameService {
         return gameRepo.findByUserId(userId);
     }
 
-    // Delete entire game
+    // Delete entire game along with category and qna info for it 
     public void deleteGame(String gameId) {
         List<Category> cats = categoryRepo.findByGameId(gameId);
         for (Category c : cats) {
@@ -157,7 +161,7 @@ public class GameService {
         gameRepo.deleteById(gameId);
     }
 
-    // LOAD FULL GAME FOR EDIT MODE
+    // loads full game for the user to edit 
     public GameFullDTO loadFullGame(String gameId) {
         Game g = gameRepo.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("Game not found"));
@@ -192,7 +196,7 @@ public class GameService {
         return out;
     }
 
-    // LOAD GAME FOR PLAY MODE
+    // load game for user to present/play their jeopardy
     public GamePlayDTO loadGameForPlay(String gameId) {
         Game g = gameRepo.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("Game not found"));
