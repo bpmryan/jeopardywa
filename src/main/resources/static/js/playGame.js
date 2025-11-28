@@ -1,89 +1,146 @@
 /*
- * Functions to present game
+ * Functions to present/play game
  */
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const params = new URLSearchParams(window.location.search);
-  const gameId = params.get("gameId");
-  // check to see if gameId doesn't exist
-  if (!gameId) {
-    document.getElementById("board").innerText = "No gameId provided";
-    return;
-  }
-  await loadBoard(gameId);
-});
+// reads a value from the url query string
+// extracts gameId from the url string when frontend calls for gameId
+// uses URLSearchParams to read the url and find gameId
+function getParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
 
-async function loadBoard(gameId) {
-  const response = await fetch(`/api/game/play/${gameId}`);
-  if (!response.ok) {
-    console.error("Failed to load play data", await response.text());
-    return;
-  }
-  const data = await response.json();
-  document.getElementById("gameTitle").textContent =
-    data.gameName || "Jeopardy";
+/*
+* fetches the complete "play mode" version of the game from Spring Boot backend
+* retrieves: catgeory names, pt values, questions, answers, images, order of tiles (when dynamically generating board)
+*/
+async function loadGameForPlay(gameId) {
+  const res = await fetch(`/api/game/play/${encodeURIComponent(gameId)}`);
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
 
-  const board = document.getElementById("board");
-  board.innerHTML = "";
-  board.style.gridTemplateColumns = `repeat(${data.categories.length}, 1fr)`;
+/*
+ * dynamically generates grid 
+ * one column per category
+ * one tile per pt value
+ * category names on top
+ * each tile stores qna and image
+ * 
+ * converts JSON object into html for user to view
+ */
+function buildBoard(dto) {
+  const board = document.getElementById('boardContainer');
+  board.innerHTML = '';
 
-  // Category headers
-  data.categories.forEach((cat) => {
-    const h = document.createElement("div");
-    h.className = "categoryHeader";
-    h.textContent = cat.categoryName;
-    board.appendChild(h);
+  // clears board
+  const categories = dto.categories || [];
+  const columns = document.createElement('div');
+  columns.className = 'boardGrid';
+
+  // creates a column for each category 
+  categories.forEach(cat => {
+    const col = document.createElement('div');
+    col.className = 'boardColumn';
+    const header = document.createElement('div');
+    header.className = 'categoryHeader';
+    header.textContent = cat.categoryName;
+    col.appendChild(header);
+
+    // adds the category header (top of column)
+    // sort qna by pointValue ascending (or as provided)
+    const qnas = (cat.qna || []).sort((a,b) => a.pointValue - b.pointValue);
+    qnas.forEach(q => {
+      // creates buttons for each tile
+      const tile = document.createElement('button');
+      tile.className = 'tile';
+      tile.dataset.qnaId = q.qnaId;
+      tile.dataset.categoryId = cat.categoryId;
+      tile.dataset.question = q.question || '';
+      tile.dataset.answer = q.answer || '';
+      tile.dataset.questionImage = q.questionImageUrl || '';
+      tile.textContent = q.pointValue;
+      tile.addEventListener('click', onTileClick);
+      col.appendChild(tile);
+    });
+
+    columns.appendChild(col);
   });
 
-  // Generate rows by point value
-  const maxRows = Math.max(...data.categories.map((c) => c.qna.length));
-
-  for (let row = 0; row < maxRows; row++) {
-    for (let col = 0; col < data.categories.length; col++) {
-      const q = data.categories[col].qna[row];
-      if (!q) {
-        const empty = document.createElement("div");
-        empty.className = "emptyCell";
-        board.appendChild(empty);
-        continue;
-      }
-
-      const cell = document.createElement("div");
-      cell.className = "qnaCell";
-      cell.dataset.qna = JSON.stringify(q);
-      cell.textContent = q.pointValue;
-      cell.addEventListener("click", () => openModal(q, cell));
-      board.insertAdjacentHTML(cell);
-    }
-  }
+  board.appendChild(columns);
 }
 
-function openModal(q, cell) {
-  const modal = document.getElementById("modal");
-  const content = document.getElementById("modalContent");
+/*
+ * Reads the question data (questionId and questionText)
+ * displays the modal popup
+ * shows the question
+ * shows the question image  
+ * hides answer until "Reveal answer" has been clicked
+ * 
+ * mainly makes the tile open and show the question popup
+*/
+function onTileClick(evt) {
+  // gets the data for the clicked tile
+  const tile = evt.currentTarget;
+  
+  // pulls data fromm attributes
+  const q = tile.dataset.question;
+  const a = tile.dataset.answer;
+  const img = tile.dataset.questionImage;
+  
+  // shows the category name inside the modal
+  document.getElementById('modalCategory').textContent = tile.closest('.boardColumn').querySelector('.categoryHeader').textContent;
+  
+  // shows question text
+  document.getElementById('modalQuestion').textContent = q;
 
-  content.innerHTML = `
-        <h2>${qna.pointValue} Points</h2>
-        <p><strong>Question:</strong> ${qna.question}</p>
-        ${qna.questionImageUrl ? `<img src="${qna.questionImageUrl}" />` : ""}
-        <br><br>
-        <p><strong>Answer:</strong> ${qna.answer}</p>
-        ${qna.answerImageUrl ? `<img src="${qna.answerImageUrl}" />` : ""}
-    `;
-
-  modal.classList.remove("hidden");
-
-  document.getElementById("showAnswerBtn").onclick = () => {
-    document.getElementById("answerBox").style.display = "block";
-  };
-
-// Mark cell/question box as disabled when answered 
-  if (cell) {
-    cell.classList.add("answered");
-    cell.removeEventListener("click", () => openModal(q, cell));
+  // handles image
+  const imgDiv = document.getElementById('modalImage');
+  imgDiv.innerHTML = '';
+  if (img) {
+    const i = document.createElement('img');
+    i.src = img;
+    i.style.maxWidth = '100%';
+    imgDiv.appendChild(i);
   }
+
+  // handles hiding and showing modal
+  document.getElementById('modalAnswer').textContent = a;
+  document.getElementById('modalAnswer').classList.add('hidden');
+  document.getElementById('modal').classList.remove('hidden');
 }
 
-document.getElementById("closeModal").addEventListener("click", () => {
-  document.getElementById("modal").classList.add("hidden");
+// runs automatically when the page loads
+/*
+* gets gameId
+* loads game from API
+* sets the title
+* builds the board
+*/ 
+
+// finds the gameId from the url query from the top function of this file
+document.addEventListener('DOMContentLoaded', async () => {
+  const gameId = getParam('gameId');
+
+  // back btn returns to dashboard
+  const backBtn = document.getElementById('backBtn');
+  backBtn.addEventListener('click', () => window.location.href = '/jeopardyDash/Dashboard.html');
+
+  // fetch the game and draw the grid/board
+  try {
+    const dto = await loadGameForPlay(gameId);
+    document.getElementById('gameTitle').textContent = dto.gameName || 'Jeopardy Game';
+    buildBoard(dto);
+  } catch (err) {
+    document.getElementById('boardContainer').innerHTML = `<p>Error loading game: ${err.message}</p>`;
+  }
+
+  // reveals answer when clicked 
+  // shows that it was hidden initially
+  document.getElementById('revealAnswerBtn').addEventListener('click', () => {
+    document.getElementById('modalAnswer').classList.remove('hidden');
+  });
+  // close/hides the modal popup
+  document.getElementById('closeModalBtn').addEventListener('click', () => {
+    document.getElementById('modal').classList.add('hidden');
+  });
 });
