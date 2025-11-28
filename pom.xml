@@ -54,6 +54,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Encrypting db cred -->
+		<dependency>
+			<groupId>com.github.ulisesbocchio</groupId>
+			<artifactId>jasypt-spring-boot-starter</artifactId>
+			<version>3.0.4</version> <!-- Use the latest stable version -->
+		</dependency>
+
 	</dependencies>
 
 	<build>
