@@ -31,4 +31,3 @@ public class GameFullDTO {
         public String answerImageScale;
     }
 }
-
