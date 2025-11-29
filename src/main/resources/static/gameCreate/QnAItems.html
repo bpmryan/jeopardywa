@@ -1,90 +1,81 @@
 <!-- Card that goes to gameContent.html -->
-<div class="qnaCard" style="border:1px solid #444;padding:8px;margin-bottom:8px;">
-    <div class="qnaTitle">Question #</div>
+<div
+  class="qnaCard"
+  data-qna-id=""
+  style="border: 1px solid #444; padding: 8px; margin-bottom: 8px"
+>
+  <div class="qnaTitle">Question #</div>
 
-    <!-- Place for user to input point value of the question -->
-    <div>
-        <label for="ptValue">Point value</label>
-        <input type="number" class="ptValue" placeholder="200" required>
-    </div>
+  <!-- Place for user to input point value of the question -->
+  <div>
+    <label>Point value</label>
+    <input type="number" class="ptValue" min="0" placeholder="200" required />
+  </div>
 
-    <br>
+  <br />
 
-    <!-- Place for user to add question -->
-    <div>
-        <label for="question">Question</label>
-        <textarea class="questionText" rows="5" cols="30" placeholder="Enter a question"></textarea>
-    </div>
+  <!-- Place for user to add question -->
+  <div>
+    <label>Question</label>
+    <textarea
+      class="questionText"
+      rows="5"
+      cols="30"
+      placeholder="Enter a question"
+    ></textarea>
+  </div>
 
-    <br>
+  <br />
 
-    <!-- Place for user to add image to question -->
-    <div>
-        <label>Image to question (optional):</label>
-        <br>
-        <button id="browseQuestionImg">Browse</button>
-        <input type="text" id="questionImageUrl" placeholder="path or URL">
-    </div>
-
-    <br>
-
+  <!-- Place for user to add image to question -->
+  <div>
+    <label>Question Image (URL)</label>
+    <input class="questionImageUrl" type="text" placeholder="https://..." />
     <!-- Place for user to adjust the size of the question image -->
-    <div>
-        <select class="questionImagePosition">
-            <option value="position">-Choose a position-</option>
-            <option value="top">top</option>
-            <option value="bottom">bottom</option>
-            <option value="left">left</option>
-            <option value="right">right</option>
-        </select>
+    <select class="questionImagePosition">
+      <option value="">position</option>
+      <option value="top">top</option>
+      <option value="left">left</option>
+      <option value="right">right</option>
+      <option value="bottom">bottom</option>
+    </select>
+    <input class="questionScale" type="range" min="10" max="200" value="100" />
+    <span class="questionScaleValue">100</span>
+  </div>
 
-        <br><br>
+  <br>
 
-        <label for="scaleQuestion">Scale:</label>
-        <input type="range" id="scaleQuestion" min="10" max="200" value="100" class="slider">
-        <span class="questionScaleValue">100</span>
-    </div>
+  <!-- Place for user to add answer to question -->
+  <div>
+    <label>Answer</label>
+    <textarea
+      id="answerText"
+      rows="5"
+      cols="30"
+      placeholder="Enter answer"
+    ></textarea>
+  </div>
 
-    <br>
+  <br>
 
-    <!-- Place for user to add answer to question -->
-    <div>
-        <label>Answer</label>
-        <textarea id="answerText" rows="5" cols="30" placeholder="Enter answer"></textarea>
-    </div>
-
-    <br>
-
-     <!-- Place for user to add image to question -->
-    <div>
-        <label>Image to answer (optional):</label> 
-        <br>
-        <button class="browseAnswerImg">Browse</button>
-        <input type="imageAnswer" class="answerImageUrl" placeholder="path or URL">
-    </div>
-
-    <br>
-
+  <!-- Place for user to add image to question -->
+  <div>
+    <label>Answer Image (URL)</label>
+    <input class="answerImageUrl" type="text" placeholder="https://..." />
     <!-- Place for user to adjust the size of the question image -->
-    <div>
-        <select class="answerImagePosition">
-            <option value="position">-Choose a position-</option>
-            <option value="top">top</option>
-            <option value="bottom">bottom</option>
-            <option value="left">left</option>
-            <option value="right">right</option>
-        </select>
+    <select class="answerImagePosition">
+      <option value="">position</option>
+      <option value="top">top</option>
+      <option value="left">left</option>
+      <option value="right">right</option>
+      <option value="bottom">bottom</option>
+    </select>
+    <input class="answerScale" type="range" min="10" max="200" value="100" />
+    <span class="answerScaleValue">100</span>
+  </div>
+  
+  <br>
 
-        <br><br>
-
-        <label>Scale:</label>
-        <input type="range" class="answerScale" min="10" max="200" value="100" >
-        <span class="answerScaleValue">100</span>
-    </div>
-
-    <br>
-
-    <button class="deleteQnABtn">Delete QnA</button>
-    <button>Preview</button>
-
+  <button class="deleteQnABtn">Delete QnA</button>
+  <button>Preview</button>
 </div>

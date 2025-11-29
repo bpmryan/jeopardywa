@@ -1,35 +1,29 @@
 <!-- Card that contains category name, background of categories, text color, buttons to add qna and deleting whole section -->
 
-<div class="categoryCard">
+<div class="categoryCard" data-category-id="">
   <div class="categoryHeader">
-    <!-- <label>Category Name:</label> -->
-    <input
-      type="text"
-      class="categoryName"
-      placeholder="Category name (e.g. Math)"
-    />
+    <label>Category Name:</label>
+    <input class="categoryName" placeholder="Category name (e.g. Math)"/>
     <button class="collapseCategory">Collapse</button>
     <button class="deleteCategoryBtn">Delete category</button>
   </div>
-  <br /><br />
 
   <!-- Color picker for background color -->
-  <div
-    class="categorySettings"
-    style="display: flex; gap: 12px; align-items: center; margin-top: 8px";
-  >
-    <!-- Color picker for background color for the specific category -->
-    <label>Background:</label>
-    <input type="color" class="bgkColor" value="#13162a" />
-    <!-- Color picker for text color -->
-    <label>Text:</label>
-    <input type="color" class="textColor" value="#ffffff" />
+  <div class="categorySettings" style="display: flex; gap: 12px; align-items: center; margin-top: 8px";>
+    <div>
+      <!-- Color picker for background color for the specific category -->
+      <label>Background:</label>
+      <input type="color" class="bgkColor" value="#13162a" />
+    </div>
+    <div>
+      <!-- Color picker for text color -->
+      <label>Text:</label>
+      <input type="color" class="textColor" value="#ffffff" />
+    </div>
+    <div style="margin-left:auto;">
+      <button type="button" class="addQnABtn">Add Question & Answer</button>
+    </div>
   </div>
-  <br /><br />
 
   <div class="qnaContainer" style="margin-top: 10px;"></div>
-
-  <div style="margin-top: 10px;">
-    <button class="addQnABtn">Add Question & Answer</button>
-  </div>
 </div>

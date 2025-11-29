@@ -1,7 +1,47 @@
-use jeopardywebapp;
+CREATE DATABASE IF NOT EXISTS jeopardywebapp;
+USE jeopardywebapp;
 
-alter table Game
-    add column gameName varchar(100) default 'Untitled Game';
+CREATE TABLE UserInfo (
+  userId CHAR(6) PRIMARY KEY,
+  fName VARCHAR(225) NOT NULL,
+  lName VARCHAR(225) NOT NULL,
+  username VARCHAR(60) UNIQUE NOT NULL,
+  email VARCHAR(100),
+  password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Game (
+  gameId CHAR(6) PRIMARY KEY,
+  userId CHAR(6) NOT NULL,
+  gameName VARCHAR(255),
+  FOREIGN KEY (userId) REFERENCES UserInfo(userId) ON DELETE CASCADE
+);
+
+CREATE TABLE JeopardyCategory (
+  categoryId CHAR(6) PRIMARY KEY,
+  gameId CHAR(6) NOT NULL,
+  categoryName VARCHAR(100) NOT NULL,
+  bkgColor VARCHAR(20),
+  textColor VARCHAR(20),
+  FOREIGN KEY (gameId) REFERENCES Game(gameId) ON DELETE CASCADE
+);
+
+-- condensed into one table for question data and answer data
+CREATE TABLE QnAInfo (
+  qnaId CHAR(6) PRIMARY KEY,
+  categoryId CHAR(6) NOT NULL,
+  pointValue INT NOT NULL,
+  questionText VARCHAR(2000),
+  answerText VARCHAR(2000),
+  questionImageUrl VARCHAR(1000),
+  questionImagePosition VARCHAR(50),
+  questionImageScale VARCHAR(50),
+  answerImageUrl VARCHAR(1000),
+  answerImagePosition VARCHAR(50),
+  answerImageScale VARCHAR(50),
+  FOREIGN KEY (categoryId) REFERENCES JeopardyCategory(categoryId) ON DELETE CASCADE
+);
+
 
 select * from UserInfo;
 select * from Game;

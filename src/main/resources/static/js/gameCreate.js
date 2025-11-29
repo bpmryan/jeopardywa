@@ -2,424 +2,215 @@
 // question.className('question');
 // document.getElementById('questionContainer').appendChild(question);
 
-// load html partail into a string
+// Utility to fetch partial html 
 async function loadPartial(path) {
-  const response = await fetch(path);
-  if (!response.ok) throw new Error("Failed to load " + path);
-  return await response.text();
+  const res = await fetch(path);
+  if (!res.ok) throw new Error('Failed to load ' + path);
+  return await res.text();
 }
 
-// clear container generate categories and qna in the grid
-// Get the first main container
-// GameContent.html has 2 with the saem id; todo: pick first
-const mainContainer = document.getElementById("#mainContainer");
-// main.innerHTML = "";
-
-// Helper: get current userId (expects login set localStorage.userId)
-function getCurrentUserId() {
-  return localStorage.getItem("userId") || null;
+// Insert a new category card (returns element)
+async function createCategoryCard(initial = {}) {
+  const html = await loadPartial('/gameCreate/CategoryItem.html');
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  const card = wrapper.firstElementChild; // .categoryCard
+  // populate initial values if provided
+  if (initial.categoryId) card.dataset.categoryId = initial.categoryId;
+  if (initial.categoryName) card.querySelector('.categoryName').value = initial.categoryName;
+  if (initial.bkgColor) card.querySelector('.categoryBkgColor').value = initial.bkgColor;
+  if (initial.textColor) card.querySelector('.categoryTextColor').value = initial.textColor;
+  return card;
 }
 
-// Generate a short stable id (not for DB primary keys - server will create those)
-function genLocalId(prefix = "L") {
-  return prefix + Math.floor(Math.random() * 1000000);
-}
-
-// Insert one category card and return the DOM node
-function insertCategoryFromHTML(html) {
-  // create temp wrapper to pipe in the category card
-  const wrapper = document.createElement("div");
-  wrapper.innerHTML = html.trim();
-  const category = wrapper.firstElementChild;
-  if (!category) throw new Error("Category partial returned empty content");
-  category.dataset._localId = genLocalId("cat");
-  mainContainer.appendChild(category);
-  return category;
-}
-
-// Insert one qna card into a category's qnaContainer, return qne node
-function insertQnAIntoCategory(categoryCard, qnaHTML) {
-  // create temp wrapper similarly to category card
-  const wrapper = document.createElement("div");
-  wrapper.innerHTML = html.trim();
-  const qna = wrapper.firstElementChild;
-  if (!qna) throw new Error("QnA partial returned empty content");
-  qna.dataset._localId = genLocalId("qna");
-  const qnaContainer = categoryCard.querySelector(".qnaContainer");
-  if (!qnaContainer) {
-    // fallback: append at end of category
-    categoryCard.appendChild(qna);
-  } else {
-    qnaContainer.appendChild(qna);
+// Insert a QnA card (returns element)
+async function createQnACard(initial = {}) {
+  const html = await loadPartial('/gameCreate/QnAItems.html');
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  const card = wrapper.firstElementChild; // .qnaCard
+  if (initial.qnaId) card.dataset.qnaId = initial.qnaId;
+  if (initial.ptValue) card.querySelector('.ptValue').value = initial.ptValue;
+  if (initial.questionText) card.querySelector('.questionText').value = initial.questionText;
+  if (initial.answerText) card.querySelector('.answerText').value = initial.answerText;
+  if (initial.questionImage && initial.questionImage.url) card.querySelector('.questionImageUrl').value = initial.questionImage.url;
+  if (initial.answerImage && initial.answerImage.url) card.querySelector('.answerImageUrl').value = initial.answerImage.url;
+  // update range displays:
+  const qRange = card.querySelector('.questionScale');
+  if (qRange) {
+    const qLabel = card.querySelector('.questionScaleValue');
+    qLabel.textContent = qRange.value;
+    qRange.addEventListener('input', () => qLabel.textContent = qRange.value);
   }
-  // initialize sliders and text
-  attachRangeHandlersTo(qna);
-  return qna;
+  const aRange = card.querySelector('.answerScale');
+  if (aRange) {
+    const aLabel = card.querySelector('.answerScaleValue');
+    aLabel.textContent = aRange.value;
+    aRange.addEventListener('input', () => aLabel.textContent = aRange.value);
+  }
+  return card;
 }
 
-// Attach slider handlers for a single qnaCard
-function attachRangeHandlersTo(qnaCard) {
-  const rangeEls = qnaCard.querySelectorAll('input[type="range]');
-  rangeEls.forEach((range) => {
-    // detect nearby span to show value (use nextElementSibling or query by class)
-    let display = range.nextElementSibling;
-    // if next siblint is not the label span, attempt to find span with class near it
-    if (!display || display.tagName !== "SPAN") {
-      // try find sibling with specific class patterns
-      const parent = range.parentElement || qnaCard;
-      display =
-        parent.querySelector(
-          ".questionScaleValue, .answerScaleValue, questionScaleValue"
-        ) || null;
-    }
-    if (display) display.textContent = range.value;
-    range.addEventListener("input", () => {
-      if (display) display.textContent = range.value;
-    });
-  });
-}
+// Add category button handler
+document.getElementById('addCategory').addEventListener('click', async () => {
+  const container = document.getElementById('mainContainer');
+  const card = await createCategoryCard();
+  container.appendChild(card);
+});
 
-// Adds a number to every question in each category
+// Delegated click listener for category-level buttons
+document.addEventListener('click', async (e) => {
+  const t = e.target;
+
+  // Add QnA inside category
+  if (t.classList.contains('addQnABtn')) {
+    const categoryCard = t.closest('.categoryCard');
+    const qnaContainer = categoryCard.querySelector('.qnaContainer');
+    const qnaCard = await createQnACard();
+    qnaContainer.appendChild(qnaCard);
+    renumberQnA(categoryCard);
+  }
+
+  // Delete category
+  if (t.classList.contains('deleteCategoryBtn')) {
+    const ok = confirm('Delete category?');
+    if (!ok) return;
+    t.closest('.categoryCard').remove();
+  }
+
+  // Delete QnA
+  if (t.classList.contains('deleteQnABtn')) {
+    const categoryCard = t.closest('.categoryCard');
+    t.closest('.qnaCard').remove();
+    renumberQnA(categoryCard);
+  }
+
+  // Collapse category
+  if (t.classList.contains('collapseCategory')) {
+    const card = t.closest('.categoryCard');
+    card.classList.toggle('collapsed');
+    const qnaContainer = card.querySelector('.qnaContainer');
+    const settings = card.querySelector('.categorySettings');
+    qnaContainer.style.display = qnaContainer.style.display === 'none' ? 'block' : 'none';
+    settings.style.display = settings.style.display === 'none' ? 'flex' : 'none';
+  }
+});
+
+// Renumber QnA titles inside a category 
 function renumberQnA(categoryCard) {
-  const qnaNodes = categoryCard.querySelectorAll(".qnaCard");
-  qnaNodes.forEach((card, index) => {
-    const titleEl = card.querySelector(".qnaTitle");
-    if (titleEl) titleEl.textContent = `Question ${index + 1}`;
+  const qnas = categoryCard.querySelectorAll('.qnaCard');
+  qnas.forEach((card, idx) => {
+    const title = card.querySelector('.qnaTitle');
+    if (title) title.textContent = `Question ${idx+1}`;
   });
 }
 
-// Collapse toggle for a category
-function toggleCollapseCategory(categoryCard) {
-  categoryCard.classList.toggle("collapsed");
-  const qnaContainer = categoryCard.querySelector(".qnaContainer");
-  const settings = categoryCard.querySelector(".categorySettings");
-  if (qnaContainer)
-    qnaContainer.style.display =
-      qnaContainer.style.display === "none" ? "block" : "none";
-  if (settings)
-    settings.style.display =
-      settings.style.display === "none" ? "flex" : "none";
-}
-
-// Delete category safely
-function deleteCategory(categoryCard) {
-  categoryCard.remove();
-}
-
-// Delete single qna and re-number
-function deleteQnA(qnaCard) {
-  const categoryCard = qnaCard.closest(".categoryCard");
-  qnaCard.remove();
-  if (categoryCard) renumberQnA(categoryCard);
-}
-
-// event delegation
-document.addEventListener("click", async (event) => {
-  const target = event.target;
-
-  // Add category button (top level)
-  if (target.id === "addCategory" || target.classList.contains("addCategory")) {
-    try {
-      const html = await loadPartial("../gameCreate/CategoryItem.html");
-      // insert only once per click
-      insertCategoryFromHTML(html);
-    } catch (err) {
-      console.error("Failed to add category:", err);
-      alert("Failed to load category templates.");
-    }
-    return;
-  }
-
-  // Add QnA inside a category
-  if (target.classList.contains("addQnABtn")) {
-    const categoryCard = target.closest(".categoryCard");
-    if (!categoryCard) return;
-    try {
-      const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
-      insertQnAIntoCategory(categoryCard, qnaHTML);
-      renumberQnA(categoryCard);
-    } catch (err) {
-      console.error("Failed to add QnA", err);
-      alert("Failed to load QnA template.");
-    }
-    return;
-  }
-
-  // collapse category
-  if (target.classList.contains("collaspeCategory")) {
-    const catgeoryCard = target.closet(".categoryCard");
-    if (!categoryCard) return;
-    toggleCollapseCategory(categoryCard);
-    return;
-  }
-
-  // delete category
-  if (target.classList.contains("deleteCategoryBtn")) {
-    const categoryCard = target.closest(".categoryCard");
-    if (!categoryCard) return;
-    const ok = confirm("Delete this entire category");
-    if (!ok) return;
-    deleteCategory(categoryCard);
-    return;
-  }
-
-  // delete qna
-  if (target.classList.contains("delete qna")) {
-    const qnaCard = target.closest(".qnaCard");
-    if (!qnaCard) return;
-    const ok = confirm("Delete this question?");
-    if (!ok) return;
-    deleteQnA(qnaCard);
-    return;
-  }
-});
-
-// Attach input handlers to sliders and initialize any existing partials loaded statically
-document.addEventListener("input", (evt) => {
-  const t = evt.target;
-  if (t.matches('input[type="range"]')) {
-    const display = t.nextElementSibling;
-    if (display && display.tagName === "SPAN") display.textContent = t.value;
-  }
-});
-
-// Asynec functions makes it return a promise and saves category data to db
+// Build the canonical GameDTO from DOM and POST to backend 
 async function saveAll() {
-  /*
-   * Searches through every category card in the game creation page (gameContent.html)
-   * build GameDTO shape:
-   * { userId, gameId? , categories: [ { categoryName, bkgColor, textColor, qna: [ ... ] } ] }
-   */
-
-  const userId = getCurrentUserId();
-  if (!userId) {
-    alert("No user logged in. Please sign in first.");
-    return;
-  }
-
-  // try to detect an existing gameId from the URL (edit mode)
-  const params = new URLSearchParams(window.location.search);
-  const editingGameId = params.get("gameId") || null;
-
-  // prompt for gameName if not present in URL (simple UX)
-  const gameName =
-    prompt("Enter a game name (appears on dashboard):", "") || "Untitled Game";
-
-  const payload = {
-    userId,
-    gameId: editingGameId, // server will accept null/new or use this id for updates if logic supports it
-    gameName,
-    categories: [],
+  const dto = {
+    userId: localStorage.getItem('userId') || null,
+    gameId: window.gameEditingId || null,
+    gameName: document.getElementById('gameName') ? document.getElementById('gameName').value : null,
+    categories: []
   };
 
-  const categoryCards = Array.from(document.querySelectorAll(".categoryCard"));
-  for (const cat of categoryCards) {
-    const categoryNameEl = cat.querySelector(".categoryName");
-    const bkgEl =
-      cat.querySelector(".bgkColor") ||
-      cat.querySelector(".bkgColor") ||
-      cat.querySelector("#bgkColor");
-    const textEl =
-      cat.querySelector(".textColor") || cat.querySelector("#textColor");
-
-    const categoryObj = {
-      categoryName: categoryNameEl ? categoryNameEl.value.trim() : "",
-      bkgColor: bkgEl ? bkgEl.value : "",
-      textColor: textEl ? textEl.value : "",
-      qna: [],
+  document.querySelectorAll('.categoryCard').forEach(cat => {
+    const catObj = {
+      categoryId: cat.dataset.categoryId || null,
+      categoryName: cat.querySelector('.categoryName').value || '',
+      bkgColor: cat.querySelector('.categoryBkgColor').value || '',
+      textColor: cat.querySelector('.categoryTextColor').value || '',
+      qna: []
     };
 
-    // for each qna card inside this category
-    const qnaNodes = Array.from(cat.querySelectorAll(".qnaCard"));
-    for (const qna of qnaNodes) {
-      // robust selectors: class preferred, fallback to id if present
-      const ptEl =
-        qna.querySelector(".ptValue") || qna.querySelector("#ptValue");
-      const questionEl =
-        qna.querySelector(".questionText") ||
-        qna.querySelector("#questionText");
-      const answerEl =
-        qna.querySelector(".answerText") || qna.querySelector("#answerText");
-
-      const qImageInput =
-        qna.querySelector(".questionImageUrl") ||
-        qna.querySelector("#questionImageUrl");
-      const qImagePos =
-        qna.querySelector(".questionImagePosition") ||
-        qna.querySelector("select.questionImagePosition");
-      const qImageScale =
-        qna.querySelector("#scaleQuestion") ||
-        qna.querySelector(".questionScale") ||
-        qna.querySelector('input[type="range"].questionScale');
-
-      const aImageInput =
-        qna.querySelector(".answerImageUrl") ||
-        qna.querySelector("input.answerImageUrl") ||
-        qna.querySelector('input[type="imageAnswer"]');
-      const aImagePos =
-        qna.querySelector(".answerImagePosition") ||
-        qna.querySelector("select.answerImagePosition");
-      const aImageScale = qna.querySelector(".answerScale");
-
-      const qnaObj = {
-        ptValue: ptEl ? parseInt(ptEl.value || "0", 10) : 0,
-        questionText: questionEl ? questionEl.value.trim() : "",
-        answerText: answerEl ? answerEl.value.trim() : "",
+    cat.querySelectorAll('.qnaCard').forEach(q => {
+      const qObj = {
+        qnaId: q.dataset.qnaId || null,
+        ptValue: parseInt(q.querySelector('.ptValue').value || '0', 10),
+        questionText: q.querySelector('.questionText').value || '',
+        answerText: q.querySelector('.answerText').value || '',
         questionImage: {
-          url: qImageInput ? qImageInput.value || "" : "",
-          position: qImagePos ? qImagePos.value : "",
-          scale: qImageScale ? qImageScale.value : "",
+          url: q.querySelector('.questionImageUrl').value || '',
+          position: q.querySelector('.questionImagePosition').value || '',
+          scale: q.querySelector('.questionScale').value || ''
         },
         answerImage: {
-          url: aImageInput ? aImageInput.value || "" : "",
-          position: aImagePos ? aImagePos.value : "",
-          scale: aImageScale ? aImageScale.value : "",
-        },
+          url: q.querySelector('.answerImageUrl').value || '',
+          position: q.querySelector('.answerImagePosition').value || '',
+          scale: q.querySelector('.answerScale').value || ''
+        }
       };
-
-      categoryObj.qna.push(qnaObj);
-    }
-
-    payload.categories.push(categoryObj);
-  }
-
-  // Basic validation: at least one category
-  if (payload.categories.length === 0) {
-    if (!confirm("No categories found. Do you want to save an empty game?"))
-      return;
-  }
-
-  try {
-    const res = await fetch("/api/game/saveAll", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      catObj.qna.push(qObj);
     });
 
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error("Save failed: " + text);
-    }
-    const text = await res.text();
-    alert("Save successful: " + text);
-    // optionally redirect to dashboard
-    window.location.href = "/jeopardyDash/Dashboard.html";
-  } catch (err) {
-    console.error("Save error", err);
-    alert("Failed to save game: " + err.message);
+    dto.categories.push(catObj);
+  });
+
+  // POST to backend
+  const resp = await fetch('/api/game/saveAll', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(dto)
+  });
+
+  if (!resp.ok) {
+    const txt = await resp.text();
+    alert('Save failed: ' + txt);
+    return;
   }
+  const text = await resp.text();
+  alert('Saved: ' + text);
+  // Optionally redirect to dashboard
+  window.location.href = '/jeopardyDash/Dashboard.html';
 }
 
-// Load existing game for edit mode and populate UI
+// Load an existing game into the DOM for editing
 async function loadExistingGame(gameId) {
-  try {
-    const res = await fetch(`/api/game/full/${encodeURIComponent(gameId)}`);
-    if (!res.ok) {
-      console.error("Load game failed", await res.text());
-      return;
+  // set global editing id
+  window.gameEditingId = gameId;
+  const res = await fetch(`/api/game/full/${encodeURIComponent(gameId)}`);
+  if (!res.ok) throw new Error(await res.text());
+  const dto = await res.json();
+
+  // set game name
+  if (document.getElementById('gameName')) document.getElementById('gameName').value = dto.gameName || '';
+
+  const container = document.getElementById('mainContainer');
+  container.innerHTML = '';
+
+  for (const catDTO of dto.categories) {
+    const catCard = await createCategoryCard({
+      categoryId: catDTO.categoryId,
+      categoryName: catDTO.categoryName,
+      bkgColor: catDTO.bkgColor,
+      textColor: catDTO.textColor
+    });
+    // add qnas
+    const qnaContainer = catCard.querySelector('.qnaContainer');
+    for (const qdto of catDTO.qna) {
+      const qCard = await createQnACard({
+        qnaId: qdto.qnaId,
+        ptValue: qdto.pointValue,
+        questionText: qdto.question,
+        answerText: qdto.answer,
+        questionImage: { url: qdto.questionImageUrl, position: qdto.questionImagePosition, scale: qdto.questionImageScale },
+        answerImage: { url: qdto.answerImageUrl, position: qdto.answerImagePosition, scale: qdto.answerImageScale }
+      });
+      qnaContainer.appendChild(qCard);
     }
-    const data = await res.json();
-
-    // Clear existing
-    mainContainer.innerHTML = "";
-
-    // populate categories and qna
-    for (const cat of data.categories || []) {
-      const categoryHTML = await loadPartial("../gameCreate/CategoryItem.html");
-      const categoryCard = insertCategoryFromHTML(categoryHTML);
-
-      // fill fields
-      const nameEl = categoryCard.querySelector(".categoryName");
-      const bkgEl =
-        categoryCard.querySelector(".bgkColor") ||
-        categoryCard.querySelector(".bkgColor");
-      const textEl = categoryCard.querySelector(".textColor");
-
-      if (nameEl) nameEl.value = cat.categoryName || "";
-      if (bkgEl) bkgEl.value = cat.bkgColor || "#13162a";
-      if (textEl) textEl.value = cat.textColor || "#ffffff";
-
-      // set server-side ids into dataset
-      if (cat.categoryId) categoryCard.dataset.categoryId = cat.categoryId;
-
-      // qna
-      const qnaContainer = categoryCard.querySelector(".qnaContainer");
-      for (const q of cat.qna || []) {
-        const qnaHTML = await loadPartial("../gameCreate/QnAItems.html");
-        const qnaCard = insertQnAIntoCategory(categoryCard, qnaHTML);
-
-        // map fields
-        const ptEl =
-          qnaCard.querySelector(".ptValue") ||
-          qnaCard.querySelector("#ptValue");
-        const questionEl =
-          qnaCard.querySelector(".questionText") ||
-          qnaCard.querySelector("#questionText");
-        const answerEl =
-          qnaCard.querySelector(".answerText") ||
-          qnaCard.querySelector("#answerText");
-
-        const qImageInput =
-          qnaCard.querySelector(".questionImageUrl") ||
-          qnaCard.querySelector("#questionImageUrl");
-        const qImagePos = qnaCard.querySelector(".questionImagePosition");
-        const qImageScale =
-          qnaCard.querySelector("#scaleQuestion") ||
-          qnaCard.querySelector(".questionScaleValue");
-
-        const aImageInput =
-          qnaCard.querySelector(".answerImageUrl") ||
-          qnaCard.querySelector("input.answerImageUrl");
-        const aImagePos = qnaCard.querySelector(".answerImagePosition");
-        const aImageScale = qnaCard.querySelector(".answerScale");
-
-        if (ptEl) ptEl.value = q.pointValue || 0;
-        if (questionEl) questionEl.value = q.question || "";
-        if (answerEl) answerEl.value = q.answer || "";
-
-        if (qImageInput) qImageInput.value = q.questionImageUrl || "";
-        if (qImagePos) qImagePos.value = q.questionImagePosition || "";
-        if (qImageScale && q.questionImageScale)
-          qImageScale.value = q.questionImageScale;
-
-        if (aImageInput) aImageInput.value = q.answerImageUrl || "";
-        if (aImagePos) aImagePos.value = q.answerImagePosition || "";
-        if (aImageScale && q.answerImageScale)
-          aImageScale.value = q.answerImageScale;
-
-        // map server qnaId for potential update usage
-        if (q.qnaId) qnaCard.dataset.qnaId = q.qnaId;
-      }
-      renumberQnA(categoryCard);
-    }
-  } catch (err) {
-    console.error("Error loading existing game:", err);
+    container.appendChild(catCard);
+    renumberQnA(catCard);
   }
 }
 
-// On initial load: if URL has ?gameId=..., load it for edit mode
-document.addEventListener("DOMContentLoaded", async () => {
-  // wire save button
-  const saveBtn = document.getElementById("saveGameBtn");
-  if (saveBtn) saveBtn.addEventListener("click", saveAll);
+// expose saveAll
+document.getElementById('saveGameBtn').addEventListener('click', saveAll);
 
-  // if addCategory exists on page, wire click to add category (safe fallback)
-  const addCatBtn = document.getElementById("addCategory");
-  if (addCatBtn) {
-    addCatBtn.addEventListener("click", async () => {
-      try {
-        const html = await loadPartial("../gameCreate/CategoryItem.html");
-        insertCategoryFromHTML(html);
-      } catch (err) {
-        console.error("Failed to add category", err);
-      }
-    });
-  }
-
-  // Check URL params for edit mode
+// on document load: if ?gameId=... present, load for editing 
+document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  const gameId = params.get("gameId");
+  const gameId = params.get('gameId');
   if (gameId) {
-    await loadExistingGame(gameId);
+    loadExistingGame(gameId).catch(err => console.error('Load failed', err));
   }
 });
