@@ -34,13 +34,14 @@ function buildBoard(dto) {
 
   // clears board
   const categories = dto.categories || [];
-  const columns = document.createElement('div');
-  columns.className = 'boardGrid';
+  const grid = document.createElement('div');
+  grid.className = 'boardGrid';
 
   // creates a column for each category 
   categories.forEach(cat => {
     const col = document.createElement('div');
     col.className = 'boardColumn';
+
     const header = document.createElement('div');
     header.className = 'categoryHeader';
     header.textContent = cat.categoryName;
@@ -122,13 +123,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   const gameId = getParam('gameId');
 
   // back btn returns to dashboard
-  const backBtn = document.getElementById('backBtn');
-  backBtn.addEventListener('click', () => window.location.href = '/jeopardyDash/Dashboard.html');
+  document.getElementById('backBtn').addEventListener('click', () => window.location.href = '/jeopardyDash/Dashboard.html');
 
   // fetch the game and draw the grid/board
   try {
     const dto = await loadGameForPlay(gameId);
-    document.getElementById('gameTitle').textContent = dto.gameName || 'Jeopardy Game';
+    document.getElementById('gameTitle').textContent = dto.gameName || 'Jeopardy';
     buildBoard(dto);
   } catch (err) {
     document.getElementById('boardContainer').innerHTML = `<p>Error loading game: ${err.message}</p>`;
