@@ -1,7 +1,8 @@
 CREATE DATABASE IF NOT EXISTS jeopardywebapp;
 USE jeopardywebapp;
+-- todo: update all tables 
 
-CREATE TABLE UserInfo (
+CREATE TABLE IF NOT EXISTS UserInfo (
   userId CHAR(6) PRIMARY KEY,
   fName VARCHAR(225) NOT NULL,
   lName VARCHAR(225) NOT NULL,
@@ -10,14 +11,14 @@ CREATE TABLE UserInfo (
   password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Game (
+CREATE TABLE IF NOT EXISTS Game (
   gameId CHAR(6) PRIMARY KEY,
   userId CHAR(6) NOT NULL,
   gameName VARCHAR(255),
   FOREIGN KEY (userId) REFERENCES UserInfo(userId) ON DELETE CASCADE
 );
 
-CREATE TABLE JeopardyCategory (
+CREATE TABLE IF NOT EXISTS JeopardyCategory (
   categoryId CHAR(6) PRIMARY KEY,
   gameId CHAR(6) NOT NULL,
   categoryName VARCHAR(100) NOT NULL,
@@ -26,8 +27,8 @@ CREATE TABLE JeopardyCategory (
   FOREIGN KEY (gameId) REFERENCES Game(gameId) ON DELETE CASCADE
 );
 
--- condensed into one table for question data and answer data
-CREATE TABLE QnAInfo (
+-- condensed question data and answer data into 1 table
+CREATE TABLE IF NOT EXISTS QnAInfo (
   qnaId CHAR(6) PRIMARY KEY,
   categoryId CHAR(6) NOT NULL,
   pointValue INT NOT NULL,
