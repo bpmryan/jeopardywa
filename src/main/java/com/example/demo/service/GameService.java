@@ -13,6 +13,7 @@ import com.example.demo.dto.GameDTO;
 import com.example.demo.dto.GameFullDTO;
 import com.example.demo.dto.GamePlayDTO;
 
+import jakarta.transaction.Transactional;
 import model.Category;
 import model.Game;
 import model.QnA;
@@ -33,6 +34,7 @@ public class GameService {
     private QnARepo qnaRepo;
 
     // Create or update entire game. Keeps DB in sync with incoming DTO.
+    @Transactional
     public String saveGame(GameDTO dto) {
 
         // determines whether the game needs to be updated or created
@@ -90,7 +92,6 @@ public class GameService {
             Set<String> incomingQnAIds = new HashSet<>();
 
             for (GameDTO.QnADTO qdto : catDTO.getQna()) {
-
                 QnA q;
 
                 // function is similar to category section above
@@ -115,12 +116,20 @@ public class GameService {
                     q.setQuestionImageUrl(qdto.getQuestionImage().getUrl());
                     q.setQuestionImagePosition(qdto.getQuestionImage().getPosition());
                     q.setQuestionImageScale(qdto.getQuestionImage().getScale());
+                } else {
+                    q.setQuestionImageUrl(null);
+                    q.setQuestionImagePosition(null);
+                    q.setQuestionImageScale(null);
                 }
 
                 if (qdto.getAnswerImage() != null) {
                     q.setAnswerImageUrl(qdto.getAnswerImage().getUrl());
                     q.setAnswerImagePosition(qdto.getAnswerImage().getPosition());
                     q.setAnswerImageScale(qdto.getAnswerImage().getScale());
+                } else {
+                    q.setAnswerImageUrl(null);
+                    q.setAnswerImagePosition(null);
+                    q.setAnswerImageScale(null);
                 }
 
                 qnaRepo.save(q);
@@ -187,7 +196,11 @@ public class GameService {
                 qdto.question = q.getQuestionText();
                 qdto.answer = q.getAnswerText();
                 qdto.questionImageUrl = q.getQuestionImageUrl();
+                qdto.questionImagePosition = q.getQuestionImagePosition();
+                qdto.questionImageScale = q.getQuestionImageScale();
                 qdto.answerImageUrl = q.getAnswerImageUrl();
+                qdto.answerImagePosition = q.getAnswerImagePosition();
+                qdto.answerImageScale = q.getAnswerImageScale();
                 cat.qna.add(qdto);
             }
             out.categories.add(cat);
@@ -206,7 +219,6 @@ public class GameService {
         dto.gameName = g.getGameName();
 
         List<Category> cats = categoryRepo.findByGameId(gameId);
-
         for (Category c : cats) {
 
             GamePlayDTO.CategoryDTO cat = new GamePlayDTO.CategoryDTO();
