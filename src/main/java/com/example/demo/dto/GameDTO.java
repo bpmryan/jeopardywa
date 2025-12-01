@@ -81,8 +81,8 @@ public class GameDTO {
         public String getPosition() { return position; }
         public String getScale() { return scale; }
 
-        public void setUrl(String url) { this.url = u; }
-        public void setPosition(String pos) { this.position = p; }
-        public void setScale(String scale) { this.scale = s; }
+        public void setUrl(String url) { this.url = url; }
+        public void setPosition(String pos) { this.position = pos; }
+        public void setScale(String scale) { this.scale = scale; }
     }
 }
