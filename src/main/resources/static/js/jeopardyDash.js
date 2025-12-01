@@ -20,10 +20,12 @@ async function fetchGamesByUser(userId) {
 // window.location.href = "../index.html";
 
 function createGameCard(game) {
-  const el = document.createElement('div');
-  el.className = 'gameCard';
+  const el = document.createElement("div");
+  el.className = "gameCard";
   el.innerHTML = `
-    <div class="cardHeader"><strong>${game.gameName || 'Untitled'}</strong></div>
+    <div class="cardHeader"><strong>${
+      game.gameName || "Untitled"
+    }</strong></div>
     <div class="cardBody">
       <div>Game ID: ${game.gameId}</div>
       <div class="cardOptions">
@@ -38,24 +40,28 @@ function createGameCard(game) {
 
 // loads all games based of the gameId's linked to the userId
 async function loadDashboard() {
-  const userId = localStorage.getItem('userId');
+  const userId = localStorage.getItem("userId");
+  const container =
+    document.querySelector("gameScene") || document.getElementById("gameScene");
   if (!userId) {
-    document.querySelector('gameScene').innerHTML = '<p>Please log in.</p>';
+    if (container) container.innerHTML = "<p>Please sign in.</p>";
     return;
   }
-
-  const container = document.querySelector('gameScene');
-  container.innerHTML = '<p>Loading...</p>';
+  container.innerHTML = "<p>Loading...</p>";
   try {
     const games = await fetchGamesByUser(userId);
-    if (games.length === 0) {
-      container.innerHTML = '<p>No games yet. Create one!</p>';
+    container.innerHTML = "";
+    if (!games || games.length === 0) {
+      container.innerHTML = "<p>No games yet. Create one!</p>";
       return;
     }
-    container.innerHTML = '';
-    games.forEach(g => container.appendChild(createGameCard(g)));
+    games.forEach((g) => {
+      const card = createGameCard(g);
+      container.appendChild(card);
+    });
   } catch (err) {
-    container.innerHTML = `<p>Error: ${err.message}</p>`;
+    console.error(err);
+    container.innerHTML = `<p>Error loading games: ${err.message}</p>`;
   }
 }
 
@@ -63,22 +69,19 @@ async function loadDashboard() {
 document.addEventListener('click', async (e) => {
   const t = e.target;
   if (t.classList.contains('editBtn')) {
-    const id = t.dataset.gameid;
-    window.location.href = `/gameCreate/gameContent.html?gameId=${encodeURIComponent(id)}`;
+    window.location.href = `/gameCreate/gameContent.html?gameId=${encodeURIComponent(t.dataset.gameid)}`;
   }
   if (t.classList.contains('playBtn')) {
-    const id = t.dataset.gameid;
-    window.location.href = `/play/playMode.html?gameId=${encodeURIComponent(id)}`;
+    window.location.href = `/play/playMode.html?gameId=${encodeURIComponent(t.dataset.gameid)}`;
   }
   if (t.classList.contains('deleteBtn')) {
-    const ok = confirm('Delete this game permanently?');
-    if (!ok) return;
+    if (!confirm('Delete this game permanently?')) return;
     const id = t.dataset.gameid;
     const res = await fetch(`/api/game/${encodeURIComponent(id)}`, { method: 'DELETE' });
     if (!res.ok) { alert('Delete failed'); return; }
-    // remove card visually
+    // remove card visabily
     t.closest('.gameCard').remove();
   }
 });
 
-document.addEventListener('DOMContentLoaded', loadDashboard);
+document.addEventListener("DOMContentLoaded", loadDashboard);

@@ -38,17 +38,19 @@ function buildBoard(dto) {
   grid.className = "boardGrid";
 
   // creates a column for each category
-  categories.forEach((cat) => {
+  (dto.categories || []).forEach((cat) => {
     const col = document.createElement("div");
     col.className = "boardColumn";
     const header = document.createElement("div");
     header.className = "categoryHeader";
-    header.textContent = cat.categoryName;
+    header.textContent = cat.categoryName || "";
     col.appendChild(header);
 
     // adds the category header (top of column)
     // sort qna by pointValue ascending (or as provided)
-    const qnas = (cat.qna || []).sort((a, b) => a.pointValue - b.pointValue);
+    const qnas = (cat.qna || [])
+      .slice()
+      .sort((a, b) => a.pointValue - b.pointValue);
     qnas.forEach((q) => {
       // creates buttons for each tile
       const tile = document.createElement("button");
@@ -87,27 +89,27 @@ function onTileClick(evt) {
   const img = tile.dataset.questionImage;
 
   // shows the category name inside the modal
-  document.getElementById("modalCategory").textContent = tile
-    .closest(".boardColumn")
-    .querySelector(".categoryHeader").textContent;
+  document.getElementById('modalCategory').textContent = tile.closest('.boardColumn').querySelector('.categoryHeader').textContent;
   // shows question text
-  document.getElementById("modalQuestion").textContent = q;
+  document.getElementById('modalQuestion').textContent = q || '';
 
   // handles image
-  imgDiv.innerHTML = '';
+  const imgBox = document.getElementById('modalImage');
+  imgBox.innerHTML = '';
   if (img) {
     const i = document.createElement('img');
     i.src = img;
     i.style.maxWidth = '100%';
-    imgDiv.appendChild(i);
+    imgBox.appendChild(i);
   }
 
   // handles hiding and showing modal
-  document.getElementById('modalAnswer').textContent = a;
+  document.getElementById('modalAnswer').textContent = a || '';
   document.getElementById('modalAnswer').classList.add('hidden');
   document.getElementById('modal').classList.remove('hidden');
+
   tile.disabled = true;
-  tile.classList.add('usedTile');
+  tile.classList.add("usedTile");
 }
 
 // runs automatically when the page loads
@@ -123,21 +125,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   const gameId = getParam("gameId");
 
   // fetch the game and draw the grid/board
-   try {
+  try {
     const dto = await loadGameForPlay(gameId);
-    document.getElementById('gameTitle').textContent = dto.gameName || 'Jeopardy';
+    if (document.getElementById('gameTitle')) document.getElementById('gameTitle').textContent = dto.gameName || 'Jeopardy';
     buildBoard(dto);
   } catch (err) {
-    document.getElementById('boardContainer').innerHTML = `<p>Error loading: ${err.message}</p>`;
+    console.error(err);
+    const board = document.getElementById('boardContainer');
+    if (board) board.innerHTML = `<p>Error loading game: ${err.message}</p>`;
   }
 
   // reveals answer when clicked
   // shows that it was hidden initially
-  document.getElementById('revealAnswerBtn').addEventListener('click', () => {
+  const revealBtn = document.getElementById('revealAnswerBtn');
+  if (revealBtn) revealBtn.addEventListener('click', () => {
     document.getElementById('modalAnswer').classList.remove('hidden');
   });
   // close/hides the modal popup
-  document.getElementById('closeModalBtn').addEventListener('click', () => {
+  const closeBtn = document.getElementById('closeModalBtn');
+  if (closeBtn) closeBtn.addEventListener('click', () => {
     document.getElementById('modal').classList.add('hidden');
   });
 });
