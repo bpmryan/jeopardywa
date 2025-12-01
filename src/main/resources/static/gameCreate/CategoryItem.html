@@ -4,26 +4,26 @@
   <div class="categoryHeader">
     <label>Category Name:</label>
     <input class="categoryName" placeholder="Category name (e.g. Math)"/>
-    <button class="collapseCategory">Collapse</button>
-    <button class="deleteCategoryBtn">Delete category</button>
+    <button type="button" class="collapseCategory">Collapse</button>
+    <button type="button" class="deleteCategoryBtn">Delete category</button>
   </div>
 
   <!-- Color picker for background color -->
-  <div class="categorySettings" style="display: flex; gap: 12px; align-items: center; margin-top: 8px";>
+  <div class="categorySettings" style="display: flex; gap: 8px; margin-top: 8px";>
     <div>
       <!-- Color picker for background color for the specific category -->
       <label>Background:</label>
-      <input type="color" class="bgkColor" value="#13162a" />
+      <input type="color" class="categoryBkgColor" value="#13162a" />
     </div>
     <div>
       <!-- Color picker for text color -->
       <label>Text:</label>
-      <input type="color" class="textColor" value="#ffffff" />
+      <input type="color" class="categoryTextColor" value="#ffffff" />
     </div>
     <div style="margin-left:auto;">
       <button type="button" class="addQnABtn">Add Question & Answer</button>
     </div>
   </div>
 
-  <div class="qnaContainer" style="margin-top: 10px;"></div>
+  <div class="qnaContainer" style="margin-top: 12px;"></div>
 </div>

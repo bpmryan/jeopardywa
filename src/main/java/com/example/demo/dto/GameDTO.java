@@ -41,7 +41,7 @@ public class GameDTO {
         public void setCategoryName(String name) { this.categoryName = name; }
         public void setBkgColor(String c) { this.bkgColor = c; }
         public void setTextColor(String c) { this.textColor = c; }
-        public void setQna(List<QnADTO> qna) { this.qna = qna; }
+        public void setQna(List<QnADTO> q) { this.qna = q; }
     }
 
 
@@ -81,8 +81,8 @@ public class GameDTO {
         public String getPosition() { return position; }
         public String getScale() { return scale; }
 
-        public void setUrl(String url) { this.url = url; }
-        public void setPosition(String pos) { this.position = pos; }
-        public void setScale(String scale) { this.scale = scale; }
+        public void setUrl(String url) { this.url = u; }
+        public void setPosition(String pos) { this.position = p; }
+        public void setScale(String scale) { this.scale = s; }
     }
 }
