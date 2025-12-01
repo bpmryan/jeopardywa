@@ -11,9 +11,19 @@ public class Category {
     @Id
     private String categoryId;
     private String gameId;
-    private String categoryName;
-    private String bkgColor;
-    private String textColor;
+
+    private String qnaId;
+    private Integer ptValue;
+    private String questionText;
+    private String answerText;
+
+    private String questionImageUrl;
+    private String questionImagePosition;
+    private String questionImageScale;
+
+    private String answerImageUrl;
+    private String answerImagePosition;
+    private String answerImageScale;
 
     // spring boot apparently needs no-args constructor
     public Category() {
@@ -23,10 +33,16 @@ public class Category {
     // in their respective jeopardies
     // If there is an error writing to the db, check if the names match the table
     // attributes/columns
+
     public String getCategoryId() {
         return categoryId;
     }
-      public String getGameId() {
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getGameId() {
         return gameId;
     }
 
@@ -34,34 +50,84 @@ public class Category {
         this.gameId = gameId;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public String getQnaId() {
+        return qnaId;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public void setQnaId(String qnaId) {
+        this.qnaId = qnaId;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public Integer getPtValue() {
+        return ptValue;
     }
 
-    public String getBkgColor() {
-        return bkgColor;
+    public void setPtValue(Integer ptValue) {
+        this.ptValue = ptValue;
     }
 
-    public void setBkgColor(String bkgColor) {
-        this.bkgColor = bkgColor;
+    public String getQuestionText() {
+        return questionText;
     }
 
-    public String getTextColor() {
-        return textColor;
+    public void setQuestionText(String questionText) {
+        this.questionText = questionText;
     }
 
-    public void setTextColor(String textColor) {
-        this.textColor = textColor;
+    public String getAnswerText() {
+        return answerText;
     }
 
-  
+    public void setAnswerText(String answerText) {
+        this.answerText = answerText;
+    }
 
+    public String getQuestionImageUrl() {
+        return questionImageUrl;
+    }
+
+    public void setQuestionImageUrl(String questionImageUrl) {
+        this.questionImageUrl = questionImageUrl;
+    }
+
+    public String getQuestionImagePosition() {
+        return questionImagePosition;
+    }
+
+    public void setQuestionImagePosition(String questionImagePosition) {
+        this.questionImagePosition = questionImagePosition;
+    }
+
+    public String getQuestionImageScale() {
+        return questionImageScale;
+    }
+
+    public void setQuestionImageScale(String questionImageScale) {
+        this.questionImageScale = questionImageScale;
+    }
+
+    public String getAnswerImageUrl() {
+        return answerImageUrl;
+    }
+
+    public void setAnswerImageUrl(String answerImageUrl) {
+        this.answerImageUrl = answerImageUrl;
+    }
+
+    public String getAnswerImagePosition() {
+        return answerImagePosition;
+    }
+
+    public void setAnswerImagePosition(String answerImagePosition) {
+        this.answerImagePosition = answerImagePosition;
+    }
+
+    public String getAnswerImageScale() {
+        return answerImageScale;
+    }
+
+    public void setAnswerImageScale(String answerImageScale) {
+        this.answerImageScale = answerImageScale;
+    }
+    
 }
