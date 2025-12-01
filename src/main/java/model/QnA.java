@@ -11,10 +11,10 @@ public class QnA {
     // attributes to send to the db (atttribute: QnAInfo)
     // Go back and fix the attributes, missing questionId and answerId
     @Id
+    private String qnaId;
     private String categoryId;
     private String gameId;
 
-    private String qnaId;
     private Integer ptValue;
     private String questionText;
     private String answerText;
@@ -32,6 +32,13 @@ public class QnA {
     }
 
     // getters and setters
+     public String getQnaId() {
+        return qnaId;
+    }
+
+    public void setQnaId(String qnaId) {
+        this.qnaId = qnaId;
+    }
 
     public String getCategoryId() {
         return categoryId;
@@ -49,13 +56,7 @@ public class QnA {
         this.gameId = gameId;
     }
 
-    public String getQnaId() {
-        return qnaId;
-    }
-
-    public void setQnaId(String qnaId) {
-        this.qnaId = qnaId;
-    }
+   
 
     public Integer getPtValue() {
         return ptValue;
