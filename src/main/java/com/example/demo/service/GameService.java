@@ -1,9 +1,9 @@
 package com.example.demo.service;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import com.example.demo.dto.GameDTO;
 import com.example.demo.dto.GameFullDTO;
 import com.example.demo.dto.GamePlayDTO;
 
-import jakarta.transaction.Transactional;
 import model.Category;
 import model.Game;
 import model.QnA;
@@ -33,16 +32,32 @@ public class GameService {
     @Autowired
     private QnARepo qnaRepo;
 
-    // Create or update entire game. Keeps DB in sync with incoming DTO.
-    @Transactional
-    public String saveGame(GameDTO dto) {
+    /**
+     * Save a full game structure. Handles CREATE and UPDATE.
+     * - If gameId is missing or blank -> create new Game.
+     * - If gameId present -> update existing Game and reconcile categories/qna
+     * (delete removed).
+     *
+     * The incoming GameDTO structure expected:
+     * {
+     * userId, gameId (optional for create), gameName,
+     * categories: [
+     * { categoryId (optional), categoryName, bkgColor, textColor, qna: [
+     * { qnaId (optional), ptValue, questionText, answerText, questionImage,
+     * answerImage }
+     * ]}
+     * ]
+     * }
+     */
 
+    // Create or update entire game. Keeps DB in sync with incoming DTO.
+    public String saveGame(GameDTO dto) {
         // determines whether the game needs to be updated or created
         Game game;
         String gameId;
 
         // Create game
-        // generate gameId 
+        // generate gameId
         if (dto.getGameId() == null || dto.getGameId().isBlank()) {
             gameId = "G" + String.format("%05d", (int) (Math.random() * 100000));
             game = new Game();
@@ -50,7 +65,7 @@ public class GameService {
             game.setUserId(dto.getUserId());
         }
         // update game
-        // else checks for if there is an existing gameId 
+        // else checks for if there is an existing gameId
         else {
             gameId = dto.getGameId();
             game = gameRepo.findById(gameId)
@@ -62,84 +77,88 @@ public class GameService {
         gameRepo.save(game);
 
         // fetch existing categories (via categorgId) for removal detection
+        // reconcile categories
         List<Category> existingCategories = categoryRepo.findByGameId(gameId);
         Set<String> incomingCategoryIds = new HashSet<>();
 
         // iterate incoming categories
-        for (GameDTO.CategoryDTO catDTO : dto.getCategories()) {
-            Category category;
-
-            // update mode for category
-            if (catDTO.getCategoryId() != null && !catDTO.getCategoryId().isBlank()) {
-                category = categoryRepo.findById(catDTO.getCategoryId())
-                        .orElseThrow(() -> new RuntimeException("Category missing: " + catDTO.getCategoryId()));
-            }
-            // create new categoryId and category
-            else {
-                category = new Category();
-                category.setCategoryId("C" + String.format("%05d", (int) (Math.random() * 100000)));
-                category.setGameId(gameId);
-            }
-
-            category.setCategoryName(catDTO.getCategoryName());
-            category.setBkgColor(catDTO.getBkgColor());
-            category.setTextColor(catDTO.getTextColor());
-            categoryRepo.save(category);
-            incomingCategoryIds.add(category.getCategoryId());
-
-            // process QnA inside category
-            List<QnA> existingQnA = qnaRepo.findByCategoryId(category.getCategoryId());
-            Set<String> incomingQnAIds = new HashSet<>();
-
-            for (GameDTO.QnADTO qdto : catDTO.getQna()) {
-                QnA q;
-
-                // function is similar to category section above
-                // update existing QnA
-                if (qdto.getQnaId() != null && !qdto.getQnaId().isBlank()) {
-                    q = qnaRepo.findById(qdto.getQnaId())
-                            .orElseThrow(() -> new RuntimeException("Missing QnA: " + qdto.getQnaId()));
-                }
-                // create new QnAId and QnA
-                else {
-                    q = new QnA();
-                    q.setQnaId("Q" + String.format("%05d", (int) (Math.random() * 100000)));
-                    q.setCategoryId(category.getCategoryId());
-                }
-
-                // map DTO -> entity 
-                q.setPtValue(qdto.getPtValue());
-                q.setQuestionText(qdto.getQuestionText());
-                q.setAnswerText(qdto.getAnswerText());
-
-                if (qdto.getQuestionImage() != null) {
-                    q.setQuestionImageUrl(qdto.getQuestionImage().getUrl());
-                    q.setQuestionImagePosition(qdto.getQuestionImage().getPosition());
-                    q.setQuestionImageScale(qdto.getQuestionImage().getScale());
+        if (dto.getCategories() != null) {
+            for (GameDTO.CategoryDTO catDTO : dto.getCategories()) {
+                Category category;
+                // update mode for category
+                if (catDTO.getCategoryId() != null && !catDTO.getCategoryId().isBlank()) {
+                    category = categoryRepo.findById(catDTO.getCategoryId())
+                            .orElseThrow(() -> new RuntimeException("Category missing: " + catDTO.getCategoryId()));
                 } else {
-                    q.setQuestionImageUrl(null);
-                    q.setQuestionImagePosition(null);
-                    q.setQuestionImageScale(null);
+                    // create new categoryId and category
+                    category = new Category();
+                    category.setCategoryId("C" + String.format("%05d", (int) (Math.random() * 100000)));
+                    category.setGameId(gameId);
                 }
 
-                if (qdto.getAnswerImage() != null) {
-                    q.setAnswerImageUrl(qdto.getAnswerImage().getUrl());
-                    q.setAnswerImagePosition(qdto.getAnswerImage().getPosition());
-                    q.setAnswerImageScale(qdto.getAnswerImage().getScale());
-                } else {
-                    q.setAnswerImageUrl(null);
-                    q.setAnswerImagePosition(null);
-                    q.setAnswerImageScale(null);
+                category.setCategoryName(catDTO.getCategoryName());
+                category.setBkgColor(catDTO.getBkgColor());
+                category.setTextColor(catDTO.getTextColor());
+                categoryRepo.save(category);
+
+                incomingCategoryIds.add(category.getCategoryId());
+
+                // process QnA inside category
+                // reconcile qna inside this category
+                List<QnA> existingQnA = qnaRepo.findByCategoryId(category.getCategoryId());
+                Set<String> incomingQnAIds = new HashSet<>();
+
+                if (catDTO.getQna() != null) {
+                    for (GameDTO.QnADTO qdto : catDTO.getQna()) {
+                        QnA q;
+                        // function is similar to category section above
+                        // update existing QnA
+                        if (qdto.getQnaId() != null && !qdto.getQnaId().isBlank()) {
+                            q = qnaRepo.findById(qdto.getQnaId())
+                                    .orElseThrow(() -> new RuntimeException("QnA missing: " + qdto.getQnaId()));
+                        } 
+                        // create new QnAId and QnA
+                        else {
+                            q = new QnA();
+                            q.setQnaId("Q" + String.format("%05d", (int) (Math.random() * 100000)));
+                            q.setCategoryId(category.getCategoryId());
+                        }
+
+                         // map DTO -> entity (null safety)
+                        q.setPtValue(qdto.getPtValue() == null ? 0 : qdto.getPtValue());
+                        q.setQuestionText(qdto.getQuestionText());
+                        q.setAnswerText(qdto.getAnswerText());
+
+                        if (qdto.getQuestionImage() != null) {
+                            q.setQuestionImageUrl(qdto.getQuestionImage().getUrl());
+                            q.setQuestionImagePosition(qdto.getQuestionImage().getPosition());
+                            q.setQuestionImageScale(qdto.getQuestionImage().getScale());
+                        } else {
+                            q.setQuestionImageUrl(null);
+                            q.setQuestionImagePosition(null);
+                            q.setQuestionImageScale(null);
+                        }
+
+                        if (qdto.getAnswerImage() != null) {
+                            q.setAnswerImageUrl(qdto.getAnswerImage().getUrl());
+                            q.setAnswerImagePosition(qdto.getAnswerImage().getPosition());
+                            q.setAnswerImageScale(qdto.getAnswerImage().getScale());
+                        } else {
+                            q.setAnswerImageUrl(null);
+                            q.setAnswerImagePosition(null);
+                            q.setAnswerImageScale(null);
+                        }
+
+                        qnaRepo.save(q);
+                        incomingQnAIds.add(q.getQnaId());
+                    }
                 }
 
-                qnaRepo.save(q);
-                incomingQnAIds.add(q.getQnaId());
-            }
-
-            // delete removed QnA in respective category
-            for (QnA old : existingQnA) {
-                if (!incomingQnAIds.contains(old.getQnaId())) {
-                    qnaRepo.delete(old);
+                // delete removed QnA in respective category
+                for (QnA old : existingQnA) {
+                    if (!incomingQnAIds.contains(old.getQnaId())) {
+                        qnaRepo.delete(old);
+                    }
                 }
             }
         }
@@ -147,7 +166,7 @@ public class GameService {
         // delete removed categories along with their qna
         for (Category oldCat : existingCategories) {
             if (!incomingCategoryIds.contains(oldCat.getCategoryId())) {
-                qnaRepo.deleteByCategoryId(oldCat.getCategoryId());
+                qnaRepo.deleteByCategoryId(oldCat.getCategoryId()); // delete qna rows first
                 categoryRepo.delete(oldCat);
             }
         }
@@ -155,12 +174,12 @@ public class GameService {
         return gameId;
     }
 
-    // Load list of games for dashboard
+    /// Load list of games for dashboard
     public List<Game> getGamesByUser(String userId) {
         return gameRepo.findByUserId(userId);
     }
 
-    // Delete entire game along with category and qna info for it 
+     // Delete entire game along with category and qna info for it
     public void deleteGame(String gameId) {
         List<Category> cats = categoryRepo.findByGameId(gameId);
         for (Category c : cats) {
@@ -170,7 +189,7 @@ public class GameService {
         gameRepo.deleteById(gameId);
     }
 
-    // loads full game for the user to edit 
+    // loads full game for the user to edit
     public GameFullDTO loadFullGame(String gameId) {
         Game g = gameRepo.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("Game not found"));
@@ -205,11 +224,10 @@ public class GameService {
             }
             out.categories.add(cat);
         }
-
         return out;
     }
 
-    // load game for user to present/play their jeopardy
+     // load game for user to present/play their jeopardy
     public GamePlayDTO loadGameForPlay(String gameId) {
         Game g = gameRepo.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("Game not found"));
@@ -220,7 +238,6 @@ public class GameService {
 
         List<Category> cats = categoryRepo.findByGameId(gameId);
         for (Category c : cats) {
-
             GamePlayDTO.CategoryDTO cat = new GamePlayDTO.CategoryDTO();
             cat.categoryId = c.getCategoryId();
             cat.categoryName = c.getCategoryName();
@@ -229,7 +246,6 @@ public class GameService {
                     .stream()
                     .sorted(Comparator.comparingInt(QnA::getPtValue))
                     .collect(Collectors.toList());
-
             for (QnA q : qnas) {
                 GamePlayDTO.QnADTO qdto = new GamePlayDTO.QnADTO();
                 qdto.qnaId = q.getQnaId();
@@ -240,11 +256,8 @@ public class GameService {
                 qdto.answerImageUrl = q.getAnswerImageUrl();
                 cat.qna.add(qdto);
             }
-
             dto.categories.add(cat);
         }
-
         return dto;
-
     }
 }
