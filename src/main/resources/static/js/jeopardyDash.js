@@ -11,79 +11,74 @@
  */
 
 // expects localStorage,userId set after login
-const userId = localStorage.getItem("userId");
-
-if (!userId) {
-  // redirect to login
-  // todo: comment out if unwanted
-  console.warn("No userId in storage; dashboard may be empty.");
+async function fetchGamesByUser(userId) {
+  const res = await fetch(`/api/game/user/${encodeURIComponent(userId)}`);
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json();
 }
 // TODO: uncomment once you have a functioning userAuthen
 // window.location.href = "../index.html";
 
-// Function that loads existing game wehn editing
-async function loadGames() {
-  const container = document.querySelector("#gamesContainer");
-  container.innerHTML = "Loading...";
+function createGameCard(game) {
+  const el = document.createElement('div');
+  el.className = 'gameCard';
+  el.innerHTML = `
+    <div class="cardHeader"><strong>${game.gameName || 'Untitled'}</strong></div>
+    <div class="cardBody">
+      <div>Game ID: ${game.gameId}</div>
+      <div class="cardOptions">
+        <button class="editBtn" data-gameid="${game.gameId}">Edit</button>
+        <button class="playBtn" data-gameid="${game.gameId}">Play</button>
+        <button class="deleteBtn" data-gameid="${game.gameId}">Delete</button>
+      </div>
+    </div>
+  `;
+  return el;
+}
+
+// loads all games based of the gameId's linked to the userId
+async function loadDashboard() {
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    document.querySelector('gameScene').innerHTML = '<p>Please log in.</p>';
+    return;
+  }
+
+  const container = document.querySelector('gameScene');
+  container.innerHTML = '<p>Loading...</p>';
   try {
-    const res = await fetch(`/api/game/user/${encodeURIComponent(userId)}`);
-    if (!res.ok) throw new Error(await res.text());
-    const games = await res.json();
-    if (!games.length) {
-      container.innerHTML = "<p>No saved games.</p>";
+    const games = await fetchGamesByUser(userId);
+    if (games.length === 0) {
+      container.innerHTML = '<p>No games yet. Create one!</p>';
       return;
     }
-    container.innerHTML = "";
-    games.forEach((g) => {
-      const el = document.createElement("div");
-      el.className = "gameCard";
-      el.innerHTML = `
-        <div class="gameCardHeader">
-          <strong>${g.gameName || "Untitled"}</strong>
-          <div class="gameCardButtons">
-            <button class="editBtn" data-gameid="${g.gameId}">Edit</button>
-            <button class="playBtn" data-gameid="${g.gameId}">Play</button>
-            <button class="delBtn" data-gameid="${g.gameId}">Delete</button>
-          </div>
-        </div>
-        <div class="gameCardBody">
-          <small>Game ID: ${g.gameId}</small>
-        </div>
-      `;
-      container.appendChild(el);
-    });
+    container.innerHTML = '';
+    games.forEach(g => container.appendChild(createGameCard(g)));
   } catch (err) {
-    container.innerHTML = `<p>Error loading games: ${err.message}</p>`;
+    container.innerHTML = `<p>Error: ${err.message}</p>`;
   }
 }
 
-const gameContainer = document.querySelector("gameScene");
-
 // Event delegation for edit, play, and delete buttons
-document.addEventListener("click", async (e) => {
-  const btn = e.target;
-  if (t.classList.contains("editBtn")) {
-    const gameId = t.dataset.gameid;
-    // navigate to gameCreate page with gameId query param (edit mode)
-    window.location.href = `/gameCreate/gameContent.html?gameId=${encodeURIComponent(
-      gameId
-    )}`;
+document.addEventListener('click', async (e) => {
+  const t = e.target;
+  if (t.classList.contains('editBtn')) {
+    const id = t.dataset.gameid;
+    window.location.href = `/gameCreate/gameContent.html?gameId=${encodeURIComponent(id)}`;
   }
-
-  // Play function
-  // TODO: Don't have a gamePlay folder just yet
-  if (btn.classList.contains("playBtn")) {
-    window.location.href = `/playgame/playGame.html?gameId=${id}`;
+  if (t.classList.contains('playBtn')) {
+    const id = t.dataset.gameid;
+    window.location.href = `/play/playMode.html?gameId=${encodeURIComponent(id)}`;
   }
-
-  // Delete function
-  if (btn.classList.contains("trashBtn")) {
-    const ok = confirm("Delete game permanently?");
+  if (t.classList.contains('deleteBtn')) {
+    const ok = confirm('Delete this game permanently?');
     if (!ok) return;
-    const res = await fetch(`/api/game/${id}`, { method: "DELETE" });
-    if (res.ok) loadGames();
-    else alert("Delete failed");
+    const id = t.dataset.gameid;
+    const res = await fetch(`/api/game/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    if (!res.ok) { alert('Delete failed'); return; }
+    // remove card visually
+    t.closest('.gameCard').remove();
   }
 });
 
-loadGames();
+document.addEventListener('DOMContentLoaded', loadDashboard);
