@@ -3,8 +3,8 @@ package com.example.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import model.UserInfo;
-import repo.UserInfoRepo;
+import com.example.demo.model.UserInfo;
+import com.example.demo.repo.UserInfoRepo;
 
 @Service
 public class UserService {

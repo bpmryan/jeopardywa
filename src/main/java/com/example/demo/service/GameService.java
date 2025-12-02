@@ -12,13 +12,12 @@ import org.springframework.stereotype.Service;
 import com.example.demo.dto.GameDTO;
 import com.example.demo.dto.GameFullDTO;
 import com.example.demo.dto.GamePlayDTO;
-
-import model.Category;
-import model.Game;
-import model.QnA;
-import repo.CategoryRepo;
-import repo.GameRepo;
-import repo.QnARepo;
+import com.example.demo.model.Category;
+import com.example.demo.model.Game;
+import com.example.demo.model.QnA;
+import com.example.demo.repo.CategoryRepo;
+import com.example.demo.repo.GameRepo;
+import com.example.demo.repo.QnARepo;
 
 @Service
 public class GameService {

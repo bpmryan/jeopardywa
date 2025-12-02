@@ -1,4 +1,4 @@
-package controllers;
+package com.example.demo.controllers;
 
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import model.UserInfo;
-import repo.UserInfoRepo;
+import com.example.demo.model.UserInfo;
+import com.example.demo.repo.UserInfoRepo;
 
 @RestController
 @RequestMapping("/api/auth")

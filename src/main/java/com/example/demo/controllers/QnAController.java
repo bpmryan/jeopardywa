@@ -1,10 +1,10 @@
-package controllers;
+package com.example.demo.controllers;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
-import model.QnA;
-import repo.QnARepo;
+import com.example.demo.model.QnA;
+import com.example.demo.repo.QnARepo;
 
 @RestController
 @RequestMapping("/api/qna")

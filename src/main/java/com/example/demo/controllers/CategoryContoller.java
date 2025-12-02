@@ -1,12 +1,12 @@
-package controllers;
+package com.example.demo.controllers;
 
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import model.Category;
-import repo.CategoryRepo;
+import com.example.demo.model.Category;
+import com.example.demo.repo.CategoryRepo;
 
 @RestController
 @RequestMapping("/api/categories")

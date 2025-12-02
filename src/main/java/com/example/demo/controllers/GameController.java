@@ -1,4 +1,4 @@
-package controllers;
+package com.example.demo.controllers;
 
 import java.util.List;
 
@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.GameDTO;
 import com.example.demo.dto.GameFullDTO;
 import com.example.demo.dto.GamePlayDTO;
+import com.example.demo.model.Game;
+import com.example.demo.repo.GameRepo;
 import com.example.demo.service.GameService;
-
-import model.Game;
-import repo.GameRepo;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
