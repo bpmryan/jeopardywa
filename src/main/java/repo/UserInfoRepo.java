@@ -11,12 +11,12 @@ import model.UserInfo;
 
 public interface UserInfoRepo extends JpaRepository<UserInfo, String> {
     // empty function to call/get the username
-    List<Category> findByGameId(String gameId);
+    UserInfo findByUsername(String username);
 
-    List<QnA> findByCategoryId(String categoryId);
+    UserInfo findByEmail(String email);
 
-    void deleteByCategoryId(String categoryId);
+    boolean existsByUsername(String username);
 
-    List<Game> findByUserId(String userId);
+    boolean existsByEmail(String email);
 
 }
