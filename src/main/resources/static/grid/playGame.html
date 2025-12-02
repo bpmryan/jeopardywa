@@ -28,6 +28,14 @@
       </div>
     </div>
 
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (!localStorage.getItem("userId")) {
+          window.location.href = "../userAuthen/Login.html";
+        }
+      });
+    </script>
+
     <script src="/js/playGame.js"></script>
   </body>
 </html>

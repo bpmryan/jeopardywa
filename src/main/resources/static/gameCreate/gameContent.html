@@ -23,9 +23,18 @@
         </div>
       </nav>
       <div id="mainContainer">
-          <!-- CategoryItem should pop up here -->
-        </div>
+        <!-- CategoryItem should pop up here -->
+      </div>
     </header>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (!localStorage.getItem("userId")) {
+          window.location.href = "../userAuthen/Login.html";
+        }
+      });
+    </script>
+
     <script src="../js/gameCreate.js"></script>
   </body>
 </html>

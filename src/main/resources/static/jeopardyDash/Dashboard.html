@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jeopardy Dashboard</title>
-    <link rel="stylesheet" href="../css/gdStyle.css">
-</head>
+    <link rel="stylesheet" href="../css/gdStyle.css" />
+  </head>
 
-<body>
+  <body>
     <div>
-        <!-- h1 and btn should be one group -->
-        <header class="container">
-            <h1>Jeopardy Template/Creator Thingy Dashboard </h1>
-            <button class="logout"><a href="../index.html">[-> Log Out</a></button>
-        </header>
+      <!-- h1 and btn should be one group -->
+      <header class="container">
+        <h1>Jeopardy Template/Creator Thingy Dashboard</h1>
+        <button class="logout"><a href="../index.html">[-> Log Out</a></button>
+      </header>
     </div>
 
     <!-- div and btn should its own separate one -->
     <div class="secondary">
-        <div>
-            <h3>My Games</h3>
-            <p class="subtitle">Create and manage your Jeopardy games</p>
-        </div>
+      <div>
+        <h3>My Games</h3>
+        <p class="subtitle">Create and manage your Jeopardy games</p>
+      </div>
 
-        <button class="newGame"><a href="../gameCreate/gameContent.html">+ New Game</a></button>
+      <button class="newGame">
+        <a href="../gameCreate/gameContent.html">+ New Game</a>
+      </button>
     </div>
-    <hr>
+    <hr />
 
     <!-- Every game created and saved should be below here as a card -->
     <div>
-        <div id="gamesContainer">loading</div>
+      <div id="gamesContainer">loading</div>
     </div>
-    <script src="../js/jeopardyDash.js"></script>
-</body>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (!localStorage.getItem("userId")) {
+          window.location.href = "../userAuthen/Login.html";
+        }
+      });
+    </script>
 
+    <script src="../js/jeopardyDash.js"></script>
+  </body>
 </html>
