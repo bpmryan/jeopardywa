@@ -41,8 +41,8 @@ function createGameCard(game) {
 // loads all games based of the gameId's linked to the userId
 async function loadDashboard() {
   const userId = localStorage.getItem("userId");
-  const container =
-    document.querySelector("gameScene") || document.getElementById("gameScene");
+  const container = document.getElementById("gamesContainer");
+
   if (!userId) {
     if (container) container.innerHTML = "<p>Please sign in.</p>";
     return;
