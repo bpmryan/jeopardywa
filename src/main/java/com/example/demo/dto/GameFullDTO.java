@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameFullDTO {
+    // handles loading for editing (gameContent.html? gameId=)
     public String gameId;
     public String userId;
     public String gameName;
@@ -20,12 +21,14 @@ public class GameFullDTO {
     // TODO: make sure that answer and question have ids too
     public static class QnADTO {
         public String qnaId;
-        public Integer pointValue;
-        public String question;
-        public String answer;
+        public Integer ptValue;
+        public String questionText;
+        public String answerText;
+
         public String questionImageUrl;
         public String questionImagePosition;
         public String questionImageScale;
+
         public String answerImageUrl;
         public String answerImagePosition;
         public String answerImageScale;

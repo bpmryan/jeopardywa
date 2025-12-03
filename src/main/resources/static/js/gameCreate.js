@@ -175,7 +175,7 @@ async function saveAll() {
   const rsp = await res.text();
   alert('Saved: ' + rsp);
   // redirect to dashboard after save
-  window.location.href = '/jeopardyDash/Dashboard.html';
+  // window.location.href = '/jeopardyDash/Dashboard.html';
 }
 
 // wire save button
