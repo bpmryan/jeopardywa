@@ -20,23 +20,26 @@ async function signupUser() {
     lName,
     email,
     username,
-    password: p1,
+    password: p1, // goes to transient field in UserInfo.java
   };
 
-  const res = await fetch("/api/user/signup", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user),
-  });
+  try {
+    const response = await fetch("http://localhost:8080/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    });
 
-  const txt = await res.text();
+    const result = await response.text();
+    alert(result);
 
-  // direct user to login page if they successful created an account
-  if (txt === "SUCCESS") {
-    alert("Account created! Please login.");
-    window.location.href = "../userAuthen/Login.html";
-  } else {
-    alert(txt);
+    // direct user to login page if they successful created an account
+    if (result === "SUCCESS") {
+      window.location.href = "Login.html";
+    }
+  } catch (e) {
+    console.error("Signup error:", e);
+    alert("Unable to sign up. Server offline?");
   }
 }
 
@@ -49,34 +52,39 @@ async function loginUser() {
   const req = { username, password };
 
   // part the checks with db
-  const res = await fetch("/api/user/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(req),
-  });
+  try {
+    const response = await fetch("http://localhost:8080/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
 
-  const userId = await res.text();
+    const result = await response.text();
 
-  if (userId === "ERROR") {
-    alert("Invalid username or password.");
-    return;
+    if (result === "ERROR") {
+      alert("Invalid username or password.");
+      return;
+    }
+
+    // if the login is a success, then save userId to localStorage and send them to Dashboard.html
+    localStorage.setItem("userId", result);
+    window.location.href = "../jeopardyDash/Dashboard.html";
+  } catch (e) {
+    console.error("Login error:", e);
+    alert("Unable to login. Server offline?");
   }
-
-  // if the login is a success, then save userId to localStorage and send them to Dashboard.html
-  localStorage.setItem("userId", userId);
-  window.location.href = "../jeopardyDash/Dashboard.html";
 }
 
-// auto direct if logged in 
+// auto direct if logged in
 function requireLogin() {
-    if (!localStorage.getItem("userId")) {
-        window.location.href = "../userAuthen/Login.html";
-    }
+  if (!localStorage.getItem("userId")) {
+    window.location.href = "../userAuthen/Login.html";
+  }
 }
 
 // user is sent back to index.html once they logout
 // userId is removed from localStorage once this happens
 function logoutUser() {
-    localStorage.removeItem("userId");
-    window.location.href = "../index.html";
+  localStorage.removeItem("userId");
+  window.location.href = "../index.html";
 }
