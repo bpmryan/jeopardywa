@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +38,10 @@ public class UserService {
             return "ERROR: Email already exists";
 
         // generate userId 
-        user.setUserId("U" + String.format("%05d", (int) (Math.random() * 100000)));
+        user.setUserId(UUID.randomUUID().toString());
+
         // hash password
-        user.setPassword(hash(rawPassword));
+        user.setPasswordHash(hash(rawPassword));
         // Save user data and send to db
         userInfoRepo.save(user);
 
@@ -51,7 +54,7 @@ public class UserService {
         if (user == null)
             return null;
 
-        if (!user.getPassword().equals(hash(password)))
+        if (!user.getPasswordHash().equals(hash(password)))
             return null;
 
         return user.getUserId();

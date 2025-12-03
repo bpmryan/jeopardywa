@@ -158,7 +158,8 @@ async function saveAll() {
     dto.categories.push(catObj);
   });
 
-  // POST to backend/dto
+  // POST to backend/dto 
+  // json body 
  const res = await fetch('/api/game/saveAll', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -224,12 +225,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 });
-
-// on document load: if ?gameId=... present, load for editing
-// document.addEventListener('DOMContentLoaded', () => {
-//   const params = new URLSearchParams(window.location.search);
-//   const gameId = params.get('gameId');
-//   if (gameId) {
-//     loadExistingGame(gameId).catch(err => console.error('Load failed', err));
-//   }
-// });

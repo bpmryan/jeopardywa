@@ -48,12 +48,10 @@ select * from UserInfo;
 select * from Game;
 select * from JeopardyCategory;
 select * from QnAInfo;
-select * from QuestionImage;
-select * from AnswerImage;
 select * from Dashboard;
-select * from CurrentGame;
-select * from Teams;
-select * from TeamsCorrectQnA;
+-- select * from CurrentGame;
+-- select * from Teams;
+-- select * from TeamsCorrectQnA;
 
 
 -- create table UserInfo (

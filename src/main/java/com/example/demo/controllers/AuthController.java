@@ -1,6 +1,5 @@
 package com.example.demo.controllers;
 
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,32 +8,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.UserInfo;
-import com.example.demo.repo.UserInfoRepo;
+import com.example.demo.service.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
 public class AuthController {
-    
-    @Autowired
-    private UserInfoRepo userRepo;
 
-    // Java function to generate a userId once they create an account 
-    @PostMapping("/register")
-    public UserInfo registerUser(@RequestBody UserInfo user) {
-        user.setUserId("U" + String.format("%05d", (int)(Math.random() * 100000)));
-        return userRepo.save(user);
+    @Autowired
+    private UserService userService;
+
+    // Java function to generate a userId once they create an account
+    @PostMapping("/signup")
+    public String signup(@RequestBody UserInfo user) {
+        // user.getPassword() comes from the @Transient field
+        return userService.signup(user, user.getPassword());
+    }
+
+    // login DTO 
+    static class LoginRequest {
+        public String username;
+        public String password;
     }
 
     // Checks whether or not the user inputed the correct credentials or not
     @PostMapping("/login")
-    public String login(@RequestBody UserInfo user) {
-        Optional<UserInfo> found = userRepo.findAll()
-            .stream()
-            .filter(u -> u.getUsername().equals(user.getUsername()) && u.getPassword().equals(user.getPassword()))
-            .findFirst();
+    public String login(@RequestBody LoginRequest req) {
+        String userId = userService.login(req.username, req.password);
 
-        // If user is found in db, then print "Login successful", otherwise "Invalid Credentials"
-        return found.isPresent() ? "Login Successful" : "Invalid Credentials";
+        if (userId == null) {
+            return "ERROR";
+        }
+
+        return userId;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -9,12 +10,18 @@ import jakarta.persistence.Table;
 public class Game {
     
     @Id
-    private String gameId;
+    @Column(name = "gameId", length = 36, nullable = false)
+    private String gameId; 
+
+    @Column(name = "userId", length = 36, nullable = false)
     private String userId;
+
+    @Column(name = "gameName")
     private String gameName;
 
     public Game() {}
 
+    // getters and setters
     public String getGameId() {
         return gameId;
     }
