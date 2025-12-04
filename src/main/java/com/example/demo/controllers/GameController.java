@@ -29,37 +29,36 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
-    // Saves game, categories, and qna
+    // Saves game, categories, and qna (create/update)
     @PostMapping("/saveAll")
-    public ResponseEntity<String> saveAll(@RequestBody GameDTO game) {
-        String gameId = gameService.saveGame(game);
-        // Returns success response
-        return ResponseEntity.ok("Save gameId = " + gameId);
+    public String saveAll(@RequestBody GameDTO dto) {
+        return gameService.saveGame(dto); // return gameId
     }
 
     // retrieves all games linked to the userId from the user table
+    // puts it into a list 
     @GetMapping("/user/{userId}")
-    public List<Game> getGamesByUser(@PathVariable String userId) {
-        return gameService.getGamesByUser(userId);
+    public List<GameFullDTO> getGamesByUser(@PathVariable String userId) {
+        return gameService.getGamesForDashboard(userId);
     }
 
     // Delete the whole game
     @DeleteMapping("/{gameId}")
-    public ResponseEntity<?> deleteGame(@PathVariable String gameId) {
+    public String deleteGame(@PathVariable String gameId) {
         gameService.deleteGame(gameId);
-        return ResponseEntity.ok("Deleted");
+        return "DELETED";
     }
 
-    // Load game for user to edit 
+    // Load game for user to edit
     // TODO: double check what trhis function does
     @GetMapping("/full/{gameId}")
-    public GameFullDTO loadFullGame(@PathVariable String gameId) {
+    public GameFullDTO getFull(@PathVariable String gameId) {
         return gameService.loadFullGame(gameId);
     }
 
     // Load game once user wants to play
     @GetMapping("/play/{gameId}")
-    public GamePlayDTO loadGameForPlay(@PathVariable String gameId) {
+    public GamePlayDTO getPlay(@PathVariable String gameId) {
         return gameService.loadGameForPlay(gameId);
     }
 

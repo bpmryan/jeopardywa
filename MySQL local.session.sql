@@ -1,5 +1,12 @@
 CREATE DATABASE IF NOT EXISTS jeopardywebapp;
 USE jeopardywebapp;
+
+select * from UserInfo;
+select * from Game;
+select * from JeopardyCategory;
+select * from QnAInfo;
+
+
 -- todo: update all tables 
 
 CREATE TABLE IF NOT EXISTS UserInfo (

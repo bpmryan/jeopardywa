@@ -65,7 +65,8 @@ public class GameService {
         // game.setUserId(dto.getUserId());
         // }
 
-        // trying to figure out way the save btn function in frontend isn't writing to db
+        // trying to figure out way the save btn function in frontend isn't writing to
+        // db
         String incomingId = dto.getGameId();
         if (incomingId == null || incomingId.trim().isEmpty()) {
             game = new Game();
@@ -77,7 +78,9 @@ public class GameService {
         else {
             game = gameRepo.findById(dto.getGameId())
                     .orElseThrow(() -> new RuntimeException("Game not found: " + dto.getGameId()));
+            game.setUserId(dto.getUserId());
         }
+        
         String gameId = game.getGameId();
         System.out.println("Final Game ID before save: " + game.getGameId());
 
@@ -188,13 +191,7 @@ public class GameService {
                 categoryRepo.delete(oldCat);
             }
         }
-
         return gameId;
-    }
-
-    /// Load list of games for dashboard
-    public List<Game> getGamesByUser(String userId) {
-        return gameRepo.findByUserId(userId);
     }
 
     // Delete entire game along with category and qna info for it
@@ -229,9 +226,9 @@ public class GameService {
             for (QnA q : qnas) {
                 GameFullDTO.QnADTO qdto = new GameFullDTO.QnADTO();
                 qdto.qnaId = q.getQnaId();
-                qdto.pointValue = q.getPtValue();
-                qdto.question = q.getQuestionText();
-                qdto.answer = q.getAnswerText();
+                qdto.ptValue = q.getPtValue();
+                qdto.questionText = q.getQuestionText();
+                qdto.answerText = q.getAnswerText();
                 qdto.questionImageUrl = q.getQuestionImageUrl();
                 qdto.questionImagePosition = q.getQuestionImagePosition();
                 qdto.questionImageScale = q.getQuestionImageScale();
@@ -267,7 +264,7 @@ public class GameService {
             for (QnA q : qnas) {
                 GamePlayDTO.QnADTO qdto = new GamePlayDTO.QnADTO();
                 qdto.qnaId = q.getQnaId();
-                qdto.pointValue = q.getPtValue();
+                qdto.ptValue = q.getPtValue();
                 qdto.question = q.getQuestionText();
                 qdto.answer = q.getAnswerText();
                 qdto.questionImageUrl = q.getQuestionImageUrl();
@@ -278,4 +275,17 @@ public class GameService {
         }
         return dto;
     }
+
+    public List<GameFullDTO> getGamesForDashboard(String userId) {
+        List<Game> games = gameRepo.findByUserId(userId);
+        return games.stream().map(g -> {
+            GameFullDTO dto = new GameFullDTO();
+            dto.gameId = g.getGameId();
+            dto.userId = g.getUserId();
+            dto.gameName = g.getGameName();
+            dto.categories = List.of(); // dashboard doesn’t need deep data
+            return dto;
+        }).toList();
+    }
+
 }
