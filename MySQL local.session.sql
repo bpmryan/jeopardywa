@@ -1,6 +1,101 @@
 CREATE DATABASE IF NOT EXISTS jeopardywebapp;
 USE jeopardywebapp;
 
+DELETE FROM UserInfo
+WHERE fName IN ('Alice', 'Brian', 'Carla', 'David', 'Emma');
+
+-- password is password123!
+INSERT INTO UserInfo (userId, fName, lName, username, email, passwordHash) VALUES
+('a1c2e3f4-1234-4321-abcd-001122334455', 'Alice',  'Johnson', 'alicej', 'alice@example.com',
+ '$2a$10$b5fY7eHdbCMptG5Vn9Yw0e0pWn00ZAZt0.puWZP1H35ROqEX3p6pS'),
+
+('b2d3f4e5-2345-5432-bcde-112233445566', 'Brian', 'Stevens', 'brianst', 'brian@example.com',
+ '$2a$10$b5fY7eHdbCMptG5Vn9Yw0e0pWn00ZAZt0.puWZP1H35ROqEX3p6pS'),
+
+('c3e4f5d6-3456-6543-cdef-223344556677', 'Carla', 'Ramirez', 'carlar', 'carla@example.com',
+ '$2a$10$b5fY7eHdbCMptG5Vn9Yw0e0pWn00ZAZt0.puWZP1H35ROqEX3p6pS'),
+
+('d4f5e6c7-4567-7654-def0-334455667788', 'David', 'Nguyen', 'dnguyen', 'david@example.com',
+ '$2a$10$b5fY7eHdbCMptG5Vn9Yw0e0pWn00ZAZt0.puWZP1H35ROqEX3p6pS'),
+
+('e5f6c7d8-5678-8765-ef01-445566778899', 'Emma', 'Peterson', 'emmap', 'emma@example.com',
+ '$2a$10$b5fY7eHdbCMptG5Vn9Yw0e0pWn00ZAZt0.puWZP1H35ROqEX3p6pS');
+
+INSERT INTO Game (gameId, userId, gameName) VALUES
+('11111111-1111-1111-1111-111111111111', 'a1c2e3f4-1234-4321-abcd-001122334455', 'General Knowledge Trivia'),
+('22222222-2222-2222-2222-222222222222', 'b2d3f4e5-2345-5432-bcde-112233445566', 'Science Challenge'),
+('33333333-3333-3333-3333-333333333333', 'c3e4f5d6-3456-6543-cdef-223344556677', 'History Master Quiz'),
+('44444444-4444-4444-4444-444444444444', 'd4f5e6c7-4567-7654-def0-334455667788', 'Movie & TV Trivia'),
+('55555555-5555-5555-5555-555555555555', 'e5f6c7d8-5678-8765-ef01-445566778899', 'Sports Trivia');
+
+INSERT INTO JeopardyCategory (categoryId, gameId, categoryName, bkgColor, textColor) VALUES
+-- Game 1: General Knowledge
+('cat-g1-1', '11111111-1111-1111-1111-111111111111', 'Geography', '#003f5c', '#ffffff'),
+('cat-g1-2', '11111111-1111-1111-1111-111111111111', 'Animals', '#58508d', '#ffffff'),
+('cat-g1-3', '11111111-1111-1111-1111-111111111111', 'Food', '#bc5090', '#ffffff'),
+
+-- Game 2: Science
+('cat-g2-1', '22222222-2222-2222-2222-222222222222', 'Biology', '#003f5c', '#ffffff'),
+('cat-g2-2', '22222222-2222-2222-2222-222222222222', 'Chemistry', '#58508d', '#ffffff'),
+('cat-g2-3', '22222222-2222-2222-2222-222222222222', 'Physics', '#bc5090', '#ffffff'),
+
+-- Game 3: History
+('cat-g3-1', '33333333-3333-3333-3333-333333333333', 'Ancient', '#003f5c', '#ffffff'),
+('cat-g3-2', '33333333-3333-3333-3333-333333333333', 'Medieval', '#58508d', '#ffffff'),
+('cat-g3-3', '33333333-3333-3333-3333-333333333333', 'Modern', '#bc5090', '#ffffff'),
+
+-- Game 4: Movies & TV
+('cat-g4-1', '44444444-4444-4444-4444-444444444444', 'Actors', '#003f5c', '#ffffff'),
+('cat-g4-2', '44444444-4444-4444-4444-444444444444', 'Movies', '#58508d', '#ffffff'),
+('cat-g4-3', '44444444-4444-4444-4444-444444444444', 'TV Shows', '#bc5090', '#ffffff'),
+
+-- Game 5: Sports
+('cat-g5-1', '55555555-5555-5555-5555-555555555555', 'Football', '#003f5c', '#ffffff'),
+('cat-g5-2', '55555555-5555-5555-5555-555555555555', 'Basketball', '#58508d', '#ffffff'),
+('cat-g5-3', '55555555-5555-5555-5555-555555555555', 'Olympics', '#bc5090', '#ffffff');
+
+INSERT INTO QnAInfo
+(qnaId, categoryId, ptValue, questionText, answerText, 
+ questionImageUrl, questionImagePosition, questionImageScale,
+ answerImageUrl, answerImagePosition, answerImageScale)
+VALUES
+('q-g1-1-100', 'cat-g1-1', 100, 'What is the largest ocean?', 'Pacific Ocean', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-1-200', 'cat-g1-1', 200, 'What is the capital of France?', 'Paris', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-1-300', 'cat-g1-1', 300, 'Which desert is the largest in the world?', 'Sahara Desert', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-1-400', 'cat-g1-1', 400, 'What river runs through Egypt?', 'The Nile', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-1-500', 'cat-g1-1', 500, 'What is the smallest country?', 'Vatican City', NULL,NULL,NULL,NULL,NULL,NULL);
+
+
+INSERT INTO QnAInfo
+(qnaId, categoryId, ptValue, questionText, answerText, 
+ questionImageUrl, questionImagePosition, questionImageScale,
+ answerImageUrl, answerImagePosition, answerImageScale)
+VALUES
+('q-g1-2-100', 'cat-g1-2', 100, 'What animal is known as the King of the Jungle?', 'Lion', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-2-200', 'cat-g1-2', 200, 'What is the fastest land animal?', 'Cheetah', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-2-300', 'cat-g1-2', 300, 'What mammal can fly?', 'Bat', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-2-400', 'cat-g1-2', 400, 'What is the largest land animal?', 'Elephant', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-2-500', 'cat-g1-2', 500, 'What is the tallest animal?', 'Giraffe', NULL,NULL,NULL,NULL,NULL,NULL);
+
+INSERT INTO QnAInfo
+(qnaId, categoryId, ptValue, questionText, answerText, 
+ questionImageUrl, questionImagePosition, questionImageScale,
+ answerImageUrl, answerImagePosition, answerImageScale)
+VALUES
+('q-g1-3-100', 'cat-g1-3', 100, 'What food is known as the “fruit of the gods”?', 'Fig', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-3-200', 'cat-g1-3', 200, 'Sushi comes from what country?', 'Japan', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-3-300', 'cat-g1-3', 300, 'What is the main ingredient in guacamole?', 'Avocado', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-3-400', 'cat-g1-3', 400, 'What spice is the most expensive by weight?', 'Saffron', NULL,NULL,NULL,NULL,NULL,NULL),
+('q-g1-3-500', 'cat-g1-3', 500, 'What is the world’s hottest pepper?', 'Carolina Reaper', NULL,NULL,NULL,NULL,NULL,NULL);
+
+
+INSERT INTO Dashboard (dashboardId, userId, gameId) VALUES
+('dash-1', 'a1c2e3f4-1234-4321-abcd-001122334455', '11111111-1111-1111-1111-111111111111'),
+('dash-2', 'b2d3f4e5-2345-5432-bcde-112233445566', '22222222-2222-2222-2222-222222222222'),
+('dash-3', 'c3e4f5d6-3456-6543-cdef-223344556677', '33333333-3333-3333-3333-333333333333'),
+('dash-4', 'd4f5e6c7-4567-7654-def0-334455667788', '44444444-4444-4444-4444-444444444444'),
+('dash-5', 'e5f6c7d8-5678-8765-ef01-445566778899', '55555555-5555-5555-5555-555555555555');
+
 select * from UserInfo;
 select * from Game;
 select * from JeopardyCategory;

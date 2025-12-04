@@ -80,7 +80,7 @@ public class GameService {
                     .orElseThrow(() -> new RuntimeException("Game not found: " + dto.getGameId()));
             game.setUserId(dto.getUserId());
         }
-        
+
         String gameId = game.getGameId();
         System.out.println("Final Game ID before save: " + game.getGameId());
 
@@ -195,6 +195,7 @@ public class GameService {
     }
 
     // Delete entire game along with category and qna info for it
+    @Transactional
     public void deleteGame(String gameId) {
         List<Category> cats = categoryRepo.findByGameId(gameId);
         for (Category c : cats) {
