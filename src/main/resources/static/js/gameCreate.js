@@ -12,62 +12,50 @@ async function loadPartial(path) {
 // Insert a new category card (returns element)
 async function createCategoryCard(initial = {}) {
   const html = await loadPartial("/gameCreate/CategoryItem.html");
-  const wrapper = document.createElement("div");
-  wrapper.innerHTML = html.trim();
-  const card = wrapper.firstElementChild; // .categoryCard
+  const wrap = document.createElement("div");
+  wrap.innerHTML = html.trim();
+  const card = wrap.firstElementChild; // .categoryCard
   // populate initial values if provided
   if (initial.categoryId) card.dataset.categoryId = initial.categoryId;
-  const nameInput = card.querySelector(".categoryName");
-  if (initial.categoryName) nameInput.value = initial.categoryName;
-  const bg = card.querySelector(".categoryBkgColor");
-  if (initial.bkgColor) bg.value = initial.bkgColor;
-  const txt = card.querySelector(".categoryTextColor");
-  if (initial.textColor) txt.value = initial.textColor;
+  if (initial.categoryName)
+    card.querySelector(".categoryName").value = initial.categoryName;
+  if (initial.bkgColor)
+    card.querySelector(".categoryBkgColor").value = initial.bkgColor;
+  if (initial.textColor)
+    card.querySelector(".categoryTextColor").value = initial.textColor;
+
   return card;
 }
 
 // Insert a QnA card (returns element)
 async function createQnACard(initial = {}) {
   const html = await loadPartial("/gameCreate/QnAItems.html");
-  const wrapper = document.createElement("div");
-  wrapper.innerHTML = html.trim();
-  const card = wrapper.firstElementChild;
+  const wrap = document.createElement("div");
+  wrap.innerHTML = html.trim();
+  const card = wrap.firstElementChild;
+
   if (initial.qnaId) card.dataset.qnaId = initial.qnaId;
-  const pv = card.querySelector(".ptValue");
-  if (initial.ptValue !== undefined) pv.value = initial.ptValue;
+  if (initial.ptValue !== undefined)
+    card.querySelector(".ptValue").value = initial.ptValue;
   if (initial.questionText)
     card.querySelector(".questionText").value = initial.questionText;
   if (initial.answerText)
     card.querySelector(".answerText").value = initial.answerText;
-  if (initial.questionImage && initial.questionImage.url)
-    card.querySelector(".questionImageUrl").value = initial.questionImage.url;
-  if (initial.answerImage && initial.answerImage.url)
-    card.querySelector(".answerImageUrl").value = initial.answerImage.url;
 
   // update range displays:
   // question image range
-  const qRange = card.querySelector(".questionScale");
-  if (qRange) {
-    const qLabel = card.querySelector(".questionScaleValue");
-    qLabel.textContent = qRange.value;
-    qRange.addEventListener("input", () => (qLabel.textContent = qRange.value));
-  }
+  if (initial.questionImageUrl)
+    card.querySelector(".questionImageUrl").value = initial.questionImageUrl;
   // answer image range
-  const aRange = card.querySelector(".answerScale");
-  if (aRange) {
-    const aLabel = card.querySelector(".answerScaleValue");
-    aLabel.textContent = aRange.value;
-    aRange.addEventListener("input", () => (aLabel.textContent = aRange.value));
-  }
+  if (initial.answerImageUrl)
+    card.querySelector(".answerImageUrl").value = initial.answerImageUrl;
 
   return card;
 }
 
 // Add category button handler
 document.getElementById("addCategory").addEventListener("click", async () => {
-  const container = document.getElementById("mainContainer");
-  const card = await createCategoryCard({});
-  container.appendChild(card);
+  document.getElementById("mainContainer").append(await createCategoryCard());
 });
 
 // Delegated click listener for category-level buttons
@@ -76,27 +64,22 @@ document.addEventListener("click", async (e) => {
 
   // Add QnA inside category
   if (t.classList.contains("addQnABtn")) {
-    const categoryCard = t.closest(".categoryCard");
-    const qnaContainer = categoryCard.querySelector(".qnaContainer");
-    const qCard = await createQnACard({});
-    qnaContainer.appendChild(qCard);
-    renumberQnA(categoryCard);
-    return;
-  }
-
-  // Delete category
-  if (t.classList.contains("deleteCategoryBtn")) {
-    if (!confirm("Delete this category?")) return;
-    t.closest(".categoryCard").remove();
-    return;
+    const cat = t.closest(".categoryCard");
+    const area = cat.querySelector(".qnaContainer");
+    area.append(await createQnACard());
+    renumber(cat);
   }
 
   // Delete QnA
   if (t.classList.contains("deleteQnABtn")) {
     const cat = t.closest(".categoryCard");
     t.closest(".qnaCard").remove();
-    renumberQnA(cat);
-    return;
+    renumber(cat);
+  }
+
+  // Delete category
+  if (t.classList.contains("deleteCategoryBtn")) {
+    if (confirm("Delete category?")) t.closest(".categoryCard").remove();
   }
 
   // Collapse category
@@ -116,11 +99,9 @@ document.addEventListener("click", async (e) => {
 });
 
 // Renumber QnA titles inside a category
-function renumberQnA(categoryCard) {
-  const qnas = categoryCard.querySelectorAll(".qnaCard");
-  qnas.forEach((card, idx) => {
-    const title = card.querySelector(".qnaTitle");
-    if (title) title.textContent = `Question ${idx + 1}`;
+function renumber(catCard) {
+  catCard.querySelectorAll(".qnaCard").forEach((q, i) => {
+    q.querySelector(".qnaTitle").textContent = `Question ${i + 1}`;
   });
 }
 
@@ -128,183 +109,94 @@ function renumberQnA(categoryCard) {
 async function saveAll() {
   // Build DTO
   const dto = {
-    userId: localStorage.getItem("userId") || null,
+    userId: localStorage.getItem("userId"),
     gameId: window.gameEditingId || null,
-    gameName: document.getElementById("gameName")
-      ? document.getElementById("gameName").value
-      : null,
-    categories: [],
+    gameName: document.getElementById("gameName").value,
+    categories: []
   };
 
-  document.querySelectorAll(".categoryCard").forEach((cat) => {
-    const catObj = {
+  document.querySelectorAll(".categoryCard").forEach(cat => {
+    const c = {
       categoryId: cat.dataset.categoryId || null,
-      categoryName: (cat.querySelector(".categoryName") || {}).value || "",
-      bkgColor: (cat.querySelector(".categoryBkgColor") || {}).value || "",
-      textColor: (cat.querySelector(".categoryTextColor") || {}).value || "",
-      qna: [],
+      categoryName: cat.querySelector(".categoryName").value,
+      bkgColor: cat.querySelector(".categoryBkgColor").value,
+      textColor: cat.querySelector(".categoryTextColor").value,
+      qna: []
     };
 
-    cat.querySelectorAll(".qnaCard").forEach((q) => {
-      const qObj = {
+    cat.querySelectorAll(".qnaCard").forEach(q => {
+      c.qna.push({
         qnaId: q.dataset.qnaId || null,
-        ptValue: parseInt((q.querySelector(".ptValue") || {}).value || "0", 10),
-        questionText: (q.querySelector(".questionText") || {}).value || "",
-        answerText: (q.querySelector(".answerText") || {}).value || "",
+        ptValue: Number(q.querySelector(".ptValue").value || 0),
+        questionText: q.querySelector(".questionText").value,
+        answerText: q.querySelector(".answerText").value,
         questionImage: {
-          url: (q.querySelector(".questionImageUrl") || {}).value || "",
-          position:
-            (q.querySelector(".questionImagePosition") || {}).value || "",
-          scale: (q.querySelector(".questionScale") || {}).value || "",
+          url: q.querySelector(".questionImageUrl").value
         },
         answerImage: {
-          url: (q.querySelector(".answerImageUrl") || {}).value || "",
-          position: (q.querySelector(".answerImagePosition") || {}).value || "",
-          scale: (q.querySelector(".answerScale") || {}).value || "",
-        },
-      };
-      catObj.qna.push(qObj);
+          url: q.querySelector(".answerImageUrl").value
+        }
+      });
     });
 
-    dto.categories.push(catObj);
+    dto.categories.push(c);
   });
 
   // POST to backend/dto
   // json body
-  const res = await fetch("/api/game/saveAll", {
+   const res = await fetch("/api/game/saveAll", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dto),
+    body: JSON.stringify(dto)
   });
 
-  if (!res.ok) {
-    const txt = await res.text();
-    alert("Save failed: " + txt);
-    return;
-  }
+  const savedId = (await res.text()).trim();
+  window.gameEditingId = savedId;
 
-  const returned = await res.text(); // server now returns gameId
-  const savedGameId = returned && returned.trim() ? returned.trim() : null;
-  if (savedGameId) {
-    // set global editing id
-    window.gameEditingId = savedGameId;
+  history.replaceState(null, "", `?gameId=${savedId}`);
+  await reloadFromServer(savedId);
 
-    // replace URL so user stays on same game edit page and can refresh safely
-    const newUrl = `${window.location.pathname}?gameId=${encodeURIComponent(
-      savedGameId
-    )}`;
-    history.replaceState(null, "", newUrl);
-
-    // optionally reload the server copy to pick up generated categoryId/qnaId values
-    try {
-      const fullRes = await fetch(
-        `/api/game/full/${encodeURIComponent(savedGameId)}`
-      );
-      if (fullRes.ok) {
-        const dto = await fullRes.json();
-        // re-populate DOM with server-snapshot so DOM elements have correct data-ids.
-        // Simplest approach: reload page content from DTO (you already have loader code in DOMContentLoaded)
-        // so call the same load logic:
-        // clear current UI and repopulate:
-        const container = document.getElementById("mainContainer");
-        container.innerHTML = "";
-        for (const catDTO of dto.categories) {
-          const catCard = await createCategoryCard({
-            categoryId: catDTO.categoryId,
-            categoryName: catDTO.categoryName,
-            bkgColor: catDTO.bkgColor,
-            textColor: catDTO.textColor,
-          });
-          const qnaContainer = catCard.querySelector(".qnaContainer");
-          for (const qdto of catDTO.qna) {
-            const qCard = await createQnACard({
-              qnaId: qdto.qnaId,
-              ptValue: qdto.pointValue,
-              questionText: qdto.question,
-              answerText: qdto.answer,
-              questionImage: {
-                url: qdto.questionImageUrl,
-                position: qdto.questionImagePosition,
-                scale: qdto.questionImageScale,
-              },
-              answerImage: {
-                url: qdto.answerImageUrl,
-                position: qdto.answerImagePosition,
-                scale: qdto.answerImageScale,
-              },
-            });
-            qnaContainer.appendChild(qCard);
-          }
-          container.appendChild(catCard);
-          renumberQnA(catCard);
-        }
-      }
-    } catch (e) {
-      console.warn("Reload after save failed", e);
-    }
-
-    alert("Saved (gameId=" + savedGameId + "). You remain in editor.");
-    return; // do not redirect
-  }
-
-  // If server returns nothing weirdly, fallback:
-  alert("Saved (no id returned). Redirecting to dashboard.");
-  window.location.href = "/jeopardyDash/Dashboard.html";
+  alert("Saved!");
 }
 
-// wire save button
-document.getElementById("saveGameBtn").addEventListener("click", saveAll);
+// reload after save 
+async function reloadFromServer(gameId) {
+  const res = await fetch(`/api/game/full/${gameId}`);
+  const dto = await res.json();
 
-// load existing game if gameId param exists
+  document.getElementById("gameName").value = dto.gameName;
+
+  const container = document.getElementById("mainContainer");
+  container.innerHTML = "";
+
+  for (const catDTO of dto.categories) {
+    const card = await createCategoryCard(catDTO);
+    const qArea = card.querySelector(".qnaContainer");
+
+    for (const qdto of catDTO.qna) {
+      const qCard = await createQnACard({
+        qnaId: qdto.qnaId,
+        ptValue: qdto.ptValue,
+        questionText: qdto.questionText,
+        answerText: qdto.answerText,
+        questionImageUrl: qdto.questionImageUrl,
+        answerImageUrl: qdto.answerImageUrl
+      });
+      qArea.append(qCard);
+    }
+
+    container.append(card);
+    renumber(card);
+  }
+}
+
+// inital load 
 document.addEventListener("DOMContentLoaded", async () => {
-  const params = new URLSearchParams(window.location.search);
-  const gid = params.get("gameId");
-  // set global editing id
+  const gid = new URLSearchParams(location.search).get("gameId");
   if (gid) {
     window.gameEditingId = gid;
-    try {
-      const res = await fetch(`/api/game/full/${encodeURIComponent(gid)}`);
-      if (!res.ok) throw new Error(await res.text());
-      const dto = await res.json();
-
-      if (document.getElementById("gameName"))
-        document.getElementById("gameName").value = dto.gameName || "";
-
-      const container = document.getElementById("mainContainer");
-      container.innerHTML = "";
-      for (const catDTO of dto.categories) {
-        const catCard = await createCategoryCard({
-          categoryId: catDTO.categoryId,
-          categoryName: catDTO.categoryName,
-          bkgColor: catDTO.bkgColor,
-          textColor: catDTO.textColor,
-        });
-        const qnaContainer = catCard.querySelector(".qnaContainer");
-        for (const qdto of catDTO.qna) {
-          const qCard = await createQnACard({
-            qnaId: qdto.qnaId,
-            ptValue: qdto.pointValue,
-            questionText: qdto.question,
-            answerText: qdto.answer,
-            questionImage: {
-              url: qdto.questionImageUrl,
-              position: qdto.questionImagePosition,
-              scale: qdto.questionImageScale,
-            },
-            answerImage: {
-              url: qdto.answerImageUrl,
-              position: qdto.answerImagePosition,
-              scale: qdto.answerImageScale,
-            },
-          });
-          qnaContainer.appendChild(qCard);
-        }
-        container.appendChild(catCard);
-        renumberQnA(catCard);
-      }
-    } catch (err) {
-      console.error("Failed to load game:", err);
-      alert("Failed to load game: " + err.message);
-    }
+    await reloadFromServer(gid);
   }
 });
+
+document.getElementById("saveGameBtn").addEventListener("click", saveAll);
