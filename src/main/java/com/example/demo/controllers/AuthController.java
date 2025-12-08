@@ -1,3 +1,9 @@
+/*
+ * AuthController.java
+ * Purpose: Authentication REST endpoints for signup and login flows used by
+ * the frontend. Delegates to UserService for signup/login logic and returns
+ * simple status strings (SUCCESS / ERROR or userId on login).
+ */
 package com.example.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;

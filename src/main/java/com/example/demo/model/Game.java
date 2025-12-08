@@ -1,3 +1,9 @@
+/*
+ * Game.java
+ * Purpose: JPA entity representing a Jeopardy game. Holds gameId, userId and
+ * gameName. Higher-level relations (categories, qna) are managed by service
+ * methods and separate repositories.
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.Column;

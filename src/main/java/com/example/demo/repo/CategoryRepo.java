@@ -1,3 +1,8 @@
+/*
+ * CategoryRepo.java
+ * Purpose: Spring Data JPA repository for Category entities. Provides
+ * methods to find categories by gameId and perform CRUD operations.
+ */
 package com.example.demo.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;

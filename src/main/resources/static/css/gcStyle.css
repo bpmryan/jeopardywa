@@ -1,3 +1,8 @@
+/*
+ * gcStyle.css
+ * Purpose: Game-creator page and category styles. Used by the editor
+ * (`gameContent.html`) to control category card layout and theming.
+ */
 /* Main jeopardy colors */
 :root {
     --primary: #115ff4;

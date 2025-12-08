@@ -1,3 +1,8 @@
+/*
+ * style.css
+ * Purpose: Global stylesheet for the public-facing pages (home, auth pages).
+ * Contains layout and typography rules used across the app.
+ */
 /* For index.html (home page) */
 .welcome_page {
     display: flex;

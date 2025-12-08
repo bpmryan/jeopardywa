@@ -1,3 +1,16 @@
+/*
+ * GameController.java
+ * Purpose: REST endpoints to manage games. Exposes APIs to save a full game
+ * (categories + QnA), retrieve games for a user, delete a game, and load
+ * games for editing or play.
+ *
+ * Important endpoints:
+ *  - POST /api/game/saveAll : save or update full game payload (returns gameId)
+ *  - GET  /api/game/user/{userId} : list games for dashboard
+ *  - DELETE /api/game/{gameId} : delete a game and related data
+ *  - GET /api/game/full/{gameId} : load full game for edit
+ *  - GET /api/game/play/{gameId} : load game for playing
+ */
 package com.example.demo.controllers;
 
 import java.util.List;

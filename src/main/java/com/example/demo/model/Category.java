@@ -1,3 +1,8 @@
+/*
+ * Category.java
+ * Purpose: JPA entity representing a category inside a Game. Fields include
+ * categoryId, gameId, categoryName and display colors.
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.Entity;

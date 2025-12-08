@@ -1,3 +1,13 @@
+/*
+ * DemoApplication.java
+ * Purpose: Spring Boot application entry point. Starts the application and
+ * exposes a simple mapping for the root path to return the `index.html`
+ * static resource.
+ *
+ * Key methods:
+ *  - main(String[]): boots the Spring application
+ *  - index(): returns the root `index.html` page
+ */
 package com.example.demo;
 
 import org.springframework.boot.SpringApplication;

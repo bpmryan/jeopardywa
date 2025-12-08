@@ -1,3 +1,12 @@
+/*
+ * UserService.java
+ * Purpose: Business logic for user authentication and account creation.
+ * - signup(UserInfo, rawPassword): validate uniqueness, hash password, save user
+ * - login(username, password): validate credentials and return userId on success
+ *
+ * Notes:
+ *  - Uses a SHA-256 hashing helper for password hashing (simple, not salted).
+ */
 package com.example.demo.service;
 
 import java.util.UUID;

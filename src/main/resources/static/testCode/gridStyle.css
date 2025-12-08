@@ -1,3 +1,7 @@
+/*
+ * gridStyle.css (testCode)
+ * Purpose: Test CSS for grid layout experiments used by `testCode/grid.html`.
+ */
 :root {
     --primary: #115ff4;
     --primary-dark: #060ce9;

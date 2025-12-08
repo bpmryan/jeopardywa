@@ -1,3 +1,9 @@
+/*
+ * CategoryContoller.java
+ * Purpose: REST endpoints for category-level operations used by the
+ * frontend/editor. Provides APIs to create, update, list and delete
+ * categories within a game.
+ */
 package com.example.demo.controllers;
 
 import java.util.*;

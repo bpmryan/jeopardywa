@@ -1,3 +1,9 @@
+/*
+ * UserInfoRepo.java
+ * Purpose: Spring Data JPA repository for UserInfo entities. Provides CRUD
+ * access and finder helpers used by authentication flows (existsByUsername,
+ * existsByEmail, findByUsername).
+ */
 package com.example.demo.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;

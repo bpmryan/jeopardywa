@@ -1,3 +1,11 @@
+/*
+ * gameCreate.js
+ * Purpose: Frontend editor script for building or editing a Jeopardy game.
+ * Responsibilities:
+ *  - Dynamically create category and QnA cards
+ *  - Serialize DOM to the GameDTO structure and POST to `/api/game/saveAll`
+ *  - Load an existing game into the editor for modification
+ */
 // const question = document.createElement('div');
 // question.className('question');
 // document.getElementById('questionContainer').appendChild(question);

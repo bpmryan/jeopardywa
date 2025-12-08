@@ -1,3 +1,8 @@
+/*
+ * express.js
+ * Purpose: Minimal example Node/Express static server used for local
+ * development/testing. Not used by the Spring Boot application.
+ */
 // Not used at the moment
 const express = require('express');
 const app = express();

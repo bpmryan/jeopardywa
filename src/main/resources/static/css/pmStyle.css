@@ -1,3 +1,8 @@
+  /*
+   * pmStyle.css
+   * Purpose: Styles used by the play view (`playMode.html`) to render the
+   * game board, modal and cells.
+   */
 #board {
   display: flex;
   gap: 10px;

@@ -1,3 +1,11 @@
+/*
+ * playMode.js
+ * Purpose: Frontend script used when presenting/playing a Jeopardy game.
+ * Responsibilities:
+ *  - Load game data from `/api/game/play/{gameId}`
+ *  - Render category columns and clickable point cells
+ *  - Show a modal with question and reveal the answer
+ */
 document.addEventListener("DOMContentLoaded", async () => {
   const gameId = new URLSearchParams(location.search).get("gameId");
   const res = await fetch(`/api/game/play/${gameId}`);

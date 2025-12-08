@@ -3,6 +3,7 @@ USE jeopardywebapp;
 
 DELETE FROM UserInfo
 WHERE fName IN ('Alice', 'Brian', 'Carla', 'David', 'Emma');
+select * from UserInfo;
 
 -- password is password123!
 INSERT INTO UserInfo (userId, fName, lName, username, email, passwordHash) VALUES
@@ -54,39 +55,31 @@ INSERT INTO JeopardyCategory (categoryId, gameId, categoryName, bkgColor, textCo
 ('cat-g5-2', '55555555-5555-5555-5555-555555555555', 'Basketball', '#58508d', '#ffffff'),
 ('cat-g5-3', '55555555-5555-5555-5555-555555555555', 'Olympics', '#bc5090', '#ffffff');
 
-INSERT INTO QnAInfo
-(qnaId, categoryId, ptValue, questionText, answerText, 
- questionImageUrl, questionImagePosition, questionImageScale,
- answerImageUrl, answerImagePosition, answerImageScale)
-VALUES
-('q-g1-1-100', 'cat-g1-1', 100, 'What is the largest ocean?', 'Pacific Ocean', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-1-200', 'cat-g1-1', 200, 'What is the capital of France?', 'Paris', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-1-300', 'cat-g1-1', 300, 'Which desert is the largest in the world?', 'Sahara Desert', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-1-400', 'cat-g1-1', 400, 'What river runs through Egypt?', 'The Nile', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-1-500', 'cat-g1-1', 500, 'What is the smallest country?', 'Vatican City', NULL,NULL,NULL,NULL,NULL,NULL);
+UPDATE QnAInfo
+SET ptValue = 100,
+    questionText = 'What is the largest ocean?',
+    answerText = 'Pacific Ocean'
+WHERE qnaId = 'f9092890-b0e6-4599-ac70-6a317620e410';
 
 
-INSERT INTO QnAInfo
-(qnaId, categoryId, ptValue, questionText, answerText, 
- questionImageUrl, questionImagePosition, questionImageScale,
- answerImageUrl, answerImagePosition, answerImageScale)
-VALUES
-('q-g1-2-100', 'cat-g1-2', 100, 'What animal is known as the King of the Jungle?', 'Lion', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-2-200', 'cat-g1-2', 200, 'What is the fastest land animal?', 'Cheetah', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-2-300', 'cat-g1-2', 300, 'What mammal can fly?', 'Bat', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-2-400', 'cat-g1-2', 400, 'What is the largest land animal?', 'Elephant', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-2-500', 'cat-g1-2', 500, 'What is the tallest animal?', 'Giraffe', NULL,NULL,NULL,NULL,NULL,NULL);
 
-INSERT INTO QnAInfo
-(qnaId, categoryId, ptValue, questionText, answerText, 
- questionImageUrl, questionImagePosition, questionImageScale,
- answerImageUrl, answerImagePosition, answerImageScale)
-VALUES
-('q-g1-3-100', 'cat-g1-3', 100, 'What food is known as the “fruit of the gods”?', 'Fig', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-3-200', 'cat-g1-3', 200, 'Sushi comes from what country?', 'Japan', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-3-300', 'cat-g1-3', 300, 'What is the main ingredient in guacamole?', 'Avocado', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-3-400', 'cat-g1-3', 400, 'What spice is the most expensive by weight?', 'Saffron', NULL,NULL,NULL,NULL,NULL,NULL),
-('q-g1-3-500', 'cat-g1-3', 500, 'What is the world’s hottest pepper?', 'Carolina Reaper', NULL,NULL,NULL,NULL,NULL,NULL);
+UPDATE QnAInfo
+SET ptValue = 200,
+    questionText = 'What is the fastest land animal?',
+    answerText = 'Cheetah'
+WHERE qnaId = '5096086b-e042-40fa-b973-403d5bbb583a';
+
+UPDATE QnAInfo
+SET ptValue = 100,
+    questionText = 'What animal is known as the King of the Jungle?',
+    answerText = 'Lion'
+WHERE qnaId = '398151ca-06ec-4b07-b760-fda12980a515';
+
+UPDATE QnAInfo
+SET ptValue = 100,
+    questionText = 'What food is known as the "fruit of the gods"?',
+    answerText = 'Fig'
+WHERE qnaId = '7d1d21af-9374-453b-b04b-29fd813f29c6';
 
 
 INSERT INTO Dashboard (dashboardId, userId, gameId) VALUES
@@ -96,7 +89,7 @@ INSERT INTO Dashboard (dashboardId, userId, gameId) VALUES
 ('dash-4', 'd4f5e6c7-4567-7654-def0-334455667788', '44444444-4444-4444-4444-444444444444'),
 ('dash-5', 'e5f6c7d8-5678-8765-ef01-445566778899', '55555555-5555-5555-5555-555555555555');
 
-select * from UserInfo;
+
 select * from Game;
 select * from JeopardyCategory;
 select * from QnAInfo;

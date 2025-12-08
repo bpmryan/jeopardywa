@@ -81,6 +81,12 @@ function requireLogin() {
     window.location.href = "../userAuthen/Login.html";
   }
 }
+/*
+ * userAuthen.js
+ * Purpose: Handles client-side authentication flows (signup, login,
+ * password reset). Performs form submission fetch calls to auth endpoints
+ * and applies basic UI feedback.
+ */
 
 // user is sent back to index.html once they logout
 // userId is removed from localStorage once this happens

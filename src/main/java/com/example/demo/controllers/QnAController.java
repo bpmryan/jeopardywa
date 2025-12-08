@@ -1,3 +1,9 @@
+/*
+ * QnAController.java
+ * Purpose: REST endpoints for managing individual QnA items. Supports create,
+ * update, delete operations tied to QnA entities and any lightweight queries
+ * required by the frontend.
+ */
 package com.example.demo.controllers;
 
 import org.springframework.beans.factory.annotation.*;

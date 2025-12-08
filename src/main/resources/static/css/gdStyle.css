@@ -1,3 +1,8 @@
+/*
+ * gdStyle.css
+ * Purpose: Dashboard/theme stylesheet. Defines color variables and styles
+ * used across dashboard pages and shared components.
+ */
 /* Main jeopardy colors */
 :root {
     --primary: #115ff4;

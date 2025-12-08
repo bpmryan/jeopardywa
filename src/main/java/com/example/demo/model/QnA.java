@@ -1,3 +1,9 @@
+/*
+ * QnA.java
+ * Purpose: JPA entity representing a single question-and-answer item.
+ * Fields include qnaId, categoryId, ptValue, questionText, answerText and
+ * optional image metadata for question/answer images.
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.Entity;

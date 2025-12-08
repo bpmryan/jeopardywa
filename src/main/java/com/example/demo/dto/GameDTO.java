@@ -1,3 +1,9 @@
+/*
+ * GameDTO.java
+ * Purpose: Data Transfer Object representing the full game payload sent
+ * between frontend and backend for create/update operations. Contains nested
+ * structures for categories and QnA items.
+ */
 package com.example.demo.dto;
 
 import java.util.List;

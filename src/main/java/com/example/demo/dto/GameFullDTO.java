@@ -1,3 +1,9 @@
+/*
+ * GameFullDTO.java
+ * Purpose: DTO used to send a fully-populated game (including categories and
+ * QnA) to the frontend when editing a game. Mirrors the structure created by
+ * GameService.loadFullGame.
+ */
 package com.example.demo.dto;
 
 import java.util.ArrayList;

@@ -1,3 +1,16 @@
+/*
+ * GameService.java
+ * Purpose: Core business logic to create, update, delete and load full game
+ * structures including categories and QnA rows.
+ *
+ * Primary responsibilities:
+ *  - saveGame(GameDTO): create or update a full game payload (creates ids,
+ *    reconciles existing categories/QnA, deletes removed entries)
+ *  - deleteGame(gameId): delete a game and all nested categories/QnA
+ *  - loadFullGame(gameId): load a deep representation for editing
+ *  - loadGameForPlay(gameId): load a trimmed representation for presenting/playing
+ *  - getGamesForDashboard(userId): lightweight list of games for dashboard
+ */
 package com.example.demo.service;
 
 import java.util.HashSet;

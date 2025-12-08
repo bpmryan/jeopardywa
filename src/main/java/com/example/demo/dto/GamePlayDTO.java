@@ -1,3 +1,9 @@
+/*
+ * GamePlayDTO.java
+ * Purpose: DTO representing the lightweight game payload sent to clients
+ * when a game is loaded for play/presentation. Contains categories and only
+ * essential QnA fields (question/answer/ptValue and image urls).
+ */
 package com.example.demo.dto;
 
 import java.util.ArrayList;

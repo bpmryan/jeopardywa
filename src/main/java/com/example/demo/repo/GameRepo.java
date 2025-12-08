@@ -1,3 +1,8 @@
+/*
+ * GameRepo.java
+ * Purpose: Spring Data JPA repository for Game entities. Used to find games
+ * by userId and standard CRUD operations.
+ */
 package com.example.demo.repo;
 
 import java.util.List;

@@ -1,3 +1,11 @@
+/*
+ * UserInfo.java
+ * Purpose: JPA entity representing a user account. Fields include userId,
+ * username, email and password hash.
+ *
+ * Notes:
+ *  - used by authentication flows and persisted via UserInfoRepo
+ */
 package com.example.demo.model;
 
 import jakarta.persistence.Transient;
