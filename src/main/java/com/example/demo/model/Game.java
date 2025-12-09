@@ -12,14 +12,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Game") //check the name of the table
+@Table(name = "Game") 
 public class Game {
     
     @Id
-    @Column(name = "gameId", length = 36, nullable = false)
+    @Column(name = "gameId", length = 36, nullable = false) //primary key
     private String gameId; 
 
-    @Column(name = "userId", length = 36, nullable = false)
+    @Column(name = "userId", length = 36, nullable = false) //freign key
     private String userId;
 
     @Column(name = "gameName")

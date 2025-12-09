@@ -5,6 +5,7 @@
  */
 package com.example.demo.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -14,8 +15,12 @@ import jakarta.persistence.Table;
 public class Category {
     // private methods to write to db (name: JeopardyCategory)
     @Id
+    @Column(name = "categoryId", length = 36, nullable = false) //primary key
     private String categoryId;
+
+    @Column(name = "gameId", length = 36, nullable = false) //foreign key
     private String gameId;
+
     private String categoryName;
     private String bkgColor;
     private String textColor;
@@ -31,7 +36,8 @@ public class Category {
     public String getCategoryId() {
         return categoryId;
     }
-      public String getGameId() {
+
+    public String getGameId() {
         return gameId;
     }
 
@@ -66,7 +72,5 @@ public class Category {
     public void setTextColor(String textColor) {
         this.textColor = textColor;
     }
-
-  
 
 }

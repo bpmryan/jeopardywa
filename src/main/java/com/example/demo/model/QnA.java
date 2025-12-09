@@ -6,6 +6,7 @@
  */
 package com.example.demo.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -17,8 +18,12 @@ public class QnA {
     // attributes to send to the db (atttribute: QnAInfo)
     // Go back and fix the attributes, missing questionId and answerId
     @Id
+    @Column(name = "qnaId", length = 36, nullable = false) //primary key
     private String qnaId;
+
+    @Column(name = "categoryId", length = 36, nullable = false) //foreign key
     private String categoryId;
+
     private String gameId;
 
     private Integer ptValue;
@@ -33,12 +38,12 @@ public class QnA {
     private String answerImagePosition;
     private String answerImageScale;
 
-     // Apparently spring boot need no-args constructors to run
+    // Apparently spring boot need no-args constructors to run
     public QnA() {
     }
 
     // getters and setters
-     public String getQnaId() {
+    public String getQnaId() {
         return qnaId;
     }
 
@@ -61,8 +66,6 @@ public class QnA {
     public void setGameId(String gameId) {
         this.gameId = gameId;
     }
-
-   
 
     public Integer getPtValue() {
         return ptValue;
@@ -135,8 +138,5 @@ public class QnA {
     public void setAnswerImageScale(String answerImageScale) {
         this.answerImageScale = answerImageScale;
     }
-
-   
-    
 
 }

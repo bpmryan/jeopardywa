@@ -9,7 +9,7 @@
 package com.example.demo.model;
 
 import jakarta.persistence.Transient;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -20,7 +20,9 @@ public class UserInfo {
 
     // attributes to send over to db (name: UserInfo)
     @Id
+    @Column(name = "userId", length = 36, nullable = false) //primary key
     private String userId;
+
     private String fName;
     private String lName;
     private String username;
@@ -30,7 +32,8 @@ public class UserInfo {
     @Transient
     private String password;
 
-    public UserInfo() {}
+    public UserInfo() {
+    }
 
     // getters and setters
     public String getUserId() {
@@ -89,5 +92,4 @@ public class UserInfo {
         this.password = password;
     }
 
-   
 }
