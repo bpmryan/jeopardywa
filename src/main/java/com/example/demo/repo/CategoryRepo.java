@@ -16,5 +16,11 @@ import java.util.List;
 public interface CategoryRepo extends JpaRepository<Category, String> {
 
     // This is so that the java functions can interact with the db
+    /**
+     * sql code translation:
+     * 
+     * select * from Category
+     * where gameId = ""
+     */
     List<Category> findByGameId(String gameId);
 }

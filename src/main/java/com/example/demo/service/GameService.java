@@ -70,13 +70,13 @@ public class GameService {
         Game game;
         // determines whether the game needs to be updated or created
 
-        // Create game
-        // generate gameId
-        // if (dto.getGameId() == null || dto.getGameId().isBlank()) {
-        // game = new Game();
-        // game.setGameId(UUID.randomUUID().toString());
-        // game.setUserId(dto.getUserId());
-        // }
+        /**
+         * sql code translation:
+         * 
+         * INSERT INTO Game (gameId, userId, gameName)
+         * VALUES (?, ?, ?);
+         * 
+         */
 
         // trying to figure out way the save btn function in frontend isn't writing to
         // db
@@ -103,6 +103,14 @@ public class GameService {
         gameRepo.save(game);
 
         // fetch existing categories (via categorgId) for removal detection
+        /**
+         * sql code translation:
+         * 
+         * INSERT INTO JeopardyCategory (categoryId, gameId, categoryName, bkgColor,
+         * textColor)
+         * VALUES (?, ?, ?, ?, ?);
+         * 
+         */
         List<Category> existingCategories = categoryRepo.findByGameId(gameId);
         Set<String> incomingCategoryIds = new HashSet<>();
 
@@ -133,6 +141,17 @@ public class GameService {
 
                 // process QnA inside category
                 // reconcile qna inside this category
+                /**
+                 * sql code translation:
+                 * 
+                 * INSERT INTO QnAInfo (
+                 * qnaId, categoryId, ptValue,
+                 * questionText, answerText,
+                 * questionImageUrl, answerImageUrl
+                 * )
+                 * VALUES (?, ?, ?, ?, ?, ?, ?);
+                 * 
+                 */
                 List<QnA> existingQnA = qnaRepo.findByCategoryId(category.getCategoryId());
                 Set<String> incomingQnAIds = new HashSet<>();
 
@@ -187,6 +206,18 @@ public class GameService {
                     }
                 }
 
+                /**
+                 * sql code translation:
+                 * 
+                 * DELETE FROM QnAInfo
+                 * WHERE categoryId IN (
+                 * SELECT categoryId
+                 * FROM JeopardyCategory
+                 * WHERE gameId = ?
+                 * );
+                 * 
+                 * 
+                 */
                 // delete removed QnA in respective category
                 for (QnA old : existingQnA) {
                     if (!incomingQnAIds.contains(old.getQnaId())) {
@@ -198,6 +229,12 @@ public class GameService {
 
         // delete removed categories along with their qna
         // delete removed categories
+        /**
+         * sql code translation:
+         * 
+         * DELETE FROM JeopardyCategory
+         * WHERE gameId = ?;
+         */
         for (Category oldCat : existingCategories) {
             if (!incomingCategoryIds.contains(oldCat.getCategoryId())) {
                 qnaRepo.deleteByCategoryId(oldCat.getCategoryId());

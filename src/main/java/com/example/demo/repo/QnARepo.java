@@ -21,6 +21,13 @@ public interface QnARepo extends JpaRepository<QnA, String> {
 
     List<QnA> findByCategoryId(String categoryId);
 
+    /**
+     * sql code translation:
+     * 
+     * DELETE FROM QnAInfo
+     * WHERE categoryId = ?;
+     * 
+     */
     void deleteByCategoryId(String categoryId);
 
 }

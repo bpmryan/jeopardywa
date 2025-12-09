@@ -130,3 +130,5 @@ working --> merging --> testing --> main
 ## Client and Server
 - Client (frontend) is resources folder
 - Server (backend) is java folder
+- Hibernate is the engine that is the translator/manager between the backend and database       
+    ``Hibernate: select g1_0.gameId,g1_0.gameName,g1_0.userId from Game g1_0 where g1_0.userId=?``

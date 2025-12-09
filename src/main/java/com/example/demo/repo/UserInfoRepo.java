@@ -11,13 +11,44 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.demo.model.UserInfo;
 
 public interface UserInfoRepo extends JpaRepository<UserInfo, String> {
-    // empty function to call/get the username
+    /**
+     * sql code translation:
+     * 
+     * select * from UserInfo
+     * where username = ""
+     */
     UserInfo findByUsername(String username);
 
+    /**
+     * sql code translation:
+     * 
+     * select * from UserInfo
+     * where email = ""
+     */
     UserInfo findByEmail(String email);
 
+    /**
+     * sql code translation:
+     * 
+     * SELECT EXISTS (
+     * SELECT 1
+     * FROM UserInfo
+     * WHERE username = ?
+     * );
+     * 
+     */
     boolean existsByUsername(String username);
 
+     /**
+     * sql code translation:
+     * 
+     * SELECT EXISTS (
+     * SELECT 1
+     * FROM UserInfo
+     * WHERE email = ?
+     * );
+     * 
+     */
     boolean existsByEmail(String email);
 
 }

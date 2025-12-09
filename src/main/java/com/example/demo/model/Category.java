@@ -11,6 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
+/**
+ * Entities classes do not write to db directly
+ * they only describe how tables and columns are mapped to Java fields
+ * mappingn only
+ */
 @Table(name = "JeopardyCategory")
 public class Category {
     // private methods to write to db (name: JeopardyCategory)
