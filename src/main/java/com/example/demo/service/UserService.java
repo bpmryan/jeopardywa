@@ -46,12 +46,23 @@ public class UserService {
         if (userInfoRepo.existsByEmail(user.getEmail()))
             return "ERROR: Email already exists";
 
-        // generate userId 
+        // generate userId
         user.setUserId(UUID.randomUUID().toString());
 
         // hash password
         user.setPasswordHash(hash(rawPassword));
-        // Save user data and send to db
+
+        /**
+         * SQL translation for signup flow:
+         *
+         * -- Uniqueness checks (already performed above with repo helpers)
+         * SELECT EXISTS (SELECT 1 FROM UserInfo WHERE username = ?);
+         * SELECT EXISTS (SELECT 1 FROM UserInfo WHERE email = ?);
+         *
+         * -- Insert new user
+         * INSERT INTO UserInfo (userId, fName, lName, username, email, passwordHash)
+         * VALUES (?, ?, ?, ?, ?, ?);
+         */
         userInfoRepo.save(user);
 
         return "SUCCESS";

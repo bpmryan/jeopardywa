@@ -23,6 +23,16 @@ public class QnAController {
     @PostMapping
     public QnA addQnA(@RequestBody QnA qna) {
         qna.setQnaId("Q" + String.format("%05d", (int)(Math.random() * 100000)));
+        /**
+         * SQL translation for creating a QnA row:
+         *
+         * INSERT INTO QnAInfo (
+         *   qnaId, categoryId, gameId, ptValue,
+         *   questionText, answerText,
+         *   questionImageUrl, questionImagePosition, questionImageScale,
+         *   answerImageUrl, answerImagePosition, answerImageScale
+         * ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+         */
         return qnaRepo.save(qna);
     }
 }

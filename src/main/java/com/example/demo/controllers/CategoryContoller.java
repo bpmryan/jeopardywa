@@ -26,6 +26,13 @@ public class CategoryContoller {
     @PostMapping
     public Category addCategory(@RequestBody Category category) {
         category.setCategoryId("C" + String.format("%05d", (int)(Math.random() * 100000)));
+
+        /**
+         * SQL translation for creating a category:
+         *
+         * INSERT INTO JeopardyCategory (categoryId, gameId, categoryName, bkgColor, textColor)
+         * VALUES (?, ?, ?, ?, ?);
+         */
         return categoryRepo.save(category);
     }
 

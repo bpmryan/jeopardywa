@@ -71,11 +71,21 @@ public class GameService {
         // determines whether the game needs to be updated or created
 
         /**
-         * sql code translation:
-         * 
+         * SQL translation (transactional flow):
+         *
+         * -- Start transaction (handled by @Transactional in Java)
+         * START TRANSACTION;
+         *
+         * -- Create new Game (used when incoming gameId is blank)
          * INSERT INTO Game (gameId, userId, gameName)
          * VALUES (?, ?, ?);
-         * 
+         *
+         * -- Update existing Game (used when incoming gameId exists)
+         * UPDATE Game
+         * SET userId = ?, gameName = ?
+         * WHERE gameId = ?;
+         *
+         * -- Note: commit/rollback is handled by the transaction manager
          */
         String incomingId = dto.getGameId();
         if (incomingId == null || incomingId.trim().isEmpty()) {
@@ -101,12 +111,21 @@ public class GameService {
 
         // fetch existing categories (via categorgId) for removal detection
         /**
-         * sql code translation:
-         * 
-         * INSERT INTO JeopardyCategory (categoryId, gameId, categoryName, bkgColor,
-         * textColor)
+         * SQL translation for category upsert / reconciliation:
+         *
+         * -- Insert new category
+         * INSERT INTO JeopardyCategory (categoryId, gameId, categoryName, bkgColor, textColor)
          * VALUES (?, ?, ?, ?, ?);
-         * 
+         *
+         * -- Update existing category
+         * UPDATE JeopardyCategory
+         * SET gameId = ?, categoryName = ?, bkgColor = ?, textColor = ?
+         * WHERE categoryId = ?;
+         *
+         * -- To remove categories that were deleted on the client, the service
+         * -- deletes QnA rows for that category first, then deletes the category:
+         * DELETE FROM QnAInfo WHERE categoryId = ?;
+         * DELETE FROM JeopardyCategory WHERE categoryId = ?;
          */
         List<Category> existingCategories = categoryRepo.findByGameId(gameId);
         Set<String> incomingCategoryIds = new HashSet<>();
@@ -139,15 +158,27 @@ public class GameService {
                 // process QnA inside category
                 // reconcile qna inside this category
                 /**
-                 * sql code translation:
-                 * 
+                 * SQL translation for QnA upsert:
+                 *
+                 * -- Insert new QnA
                  * INSERT INTO QnAInfo (
-                 * qnaId, categoryId, ptValue,
-                 * questionText, answerText,
-                 * questionImageUrl, answerImageUrl
-                 * )
-                 * VALUES (?, ?, ?, ?, ?, ?, ?);
-                 * 
+                 *   qnaId, categoryId, gameId, ptValue,
+                 *   questionText, answerText,
+                 *   questionImageUrl, questionImagePosition, questionImageScale,
+                 *   answerImageUrl, answerImagePosition, answerImageScale
+                 * ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                 *
+                 * -- Update existing QnA
+                 * UPDATE QnAInfo
+                 * SET categoryId = ?, gameId = ?, ptValue = ?, questionText = ?, answerText = ?,
+                 *     questionImageUrl = ?, questionImagePosition = ?, questionImageScale = ?,
+                 *     answerImageUrl = ?, answerImagePosition = ?, answerImageScale = ?
+                 * WHERE qnaId = ?;
+                 *
+                 * -- To delete removed QnA for a category the service issues:
+                 * DELETE FROM QnAInfo WHERE qnaId = ?;
+                 * -- Or bulk:
+                 * DELETE FROM QnAInfo WHERE categoryId = ? AND qnaId NOT IN (?, ?, ...);
                  */
                 List<QnA> existingQnA = qnaRepo.findByCategoryId(category.getCategoryId());
                 Set<String> incomingQnAIds = new HashSet<>();
@@ -204,16 +235,16 @@ public class GameService {
                 }
 
                 /**
-                 * sql code translation:
-                 * 
+                 * SQL note — delete removed QnA in this category:
+                 *
+                 * -- Delete single removed QnA row
+                 * DELETE FROM QnAInfo WHERE qnaId = ?;
+                 *
+                 * -- Or bulk-remove QnA rows for a category that are not present
+                 * -- in the incoming set:
                  * DELETE FROM QnAInfo
-                 * WHERE categoryId IN (
-                 * SELECT categoryId
-                 * FROM JeopardyCategory
-                 * WHERE gameId = ?
-                 * );
-                 * 
-                 * 
+                 * WHERE categoryId = ?
+                 *   AND qnaId NOT IN (?, ?, ...);
                  */
                 // delete removed QnA in respective category
                 for (QnA old : existingQnA) {
@@ -227,10 +258,18 @@ public class GameService {
         // delete removed categories along with their qna
         // delete removed categories
         /**
-         * sql code translation:
-         * 
+         * SQL translation — remove categories deleted by the client:
+         *
+         * -- Delete QnA rows for a category before removing the category:
+         * DELETE FROM QnAInfo WHERE categoryId = ?;
+         *
+         * -- Delete single category
+         * DELETE FROM JeopardyCategory WHERE categoryId = ?;
+         *
+         * -- Or bulk-remove categories for a game that are not in incoming set:
          * DELETE FROM JeopardyCategory
-         * WHERE gameId = ?;
+         * WHERE gameId = ?
+         *   AND categoryId NOT IN (?, ?, ...);
          */
         for (Category oldCat : existingCategories) {
             if (!incomingCategoryIds.contains(oldCat.getCategoryId())) {
