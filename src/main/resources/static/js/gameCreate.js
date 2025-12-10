@@ -6,6 +6,8 @@
  *  - Serialize DOM to the GameDTO structure and POST to `/api/game/saveAll`
  *  - Load an existing game into the editor for modification
  */
+
+// Prof Reed example:
 // const question = document.createElement('div');
 // question.className('question');
 // document.getElementById('questionContainer').appendChild(question);

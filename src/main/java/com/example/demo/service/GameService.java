@@ -77,9 +77,6 @@ public class GameService {
          * VALUES (?, ?, ?);
          * 
          */
-
-        // trying to figure out way the save btn function in frontend isn't writing to
-        // db
         String incomingId = dto.getGameId();
         if (incomingId == null || incomingId.trim().isEmpty()) {
             game = new Game();
